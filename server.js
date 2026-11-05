@@ -13,6 +13,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "openrouter/auto";
 const analysisCache = new Map();
 const MAX_CACHED_ANALYSES = 50;
+const PUBLIC_FILES = new Set(["index.html", "app.js", "firebase-config.js"]);
 
 const ANALYSIS_PROMPT = `You are a clinical AI cardiology specialist analyzing an uploaded ECG report (image or PDF).
 Inspect the waveform morphology, lead traces, rhythm strips, intervals, and printed measurements in the report.
@@ -382,7 +383,14 @@ const server = http.createServer((req, res) => {
       pathname = "/index.html";
     }
 
-    const safePath = path.normalize(path.join(__dirname, pathname));
+    const relativePath = pathname.slice(1);
+    if (!PUBLIC_FILES.has(relativePath)) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("404 Not Found");
+      return;
+    }
+
+    const safePath = path.normalize(path.join(__dirname, relativePath));
 
     if (!safePath.startsWith(__dirname)) {
       res.writeHead(403, { "Content-Type": "text/plain" });

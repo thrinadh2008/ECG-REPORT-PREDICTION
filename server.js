@@ -333,7 +333,23 @@ async function analyzeReport(req, res) {
         console.warn("OpenRouter returned an invalid ECG analysis response.");
       }
     } else {
-      console.warn(`OpenRouter upstream returned status ${upstream.status}.`);
+      const errorText = await upstream.text();
+      let upstreamMessage = "";
+      try {
+        const errorData = JSON.parse(errorText);
+        if (typeof errorData?.error?.message === "string") {
+          upstreamMessage = errorData.error.message
+            .replace(/[\u0000-\u001f\u007f]/g, " ")
+            .slice(0, 300);
+        }
+      } catch {
+        // Keep the status-only diagnostic when the provider response is not JSON.
+      }
+      console.warn(
+        upstreamMessage
+          ? `OpenRouter upstream returned status ${upstream.status}: ${upstreamMessage}`
+          : `OpenRouter upstream returned status ${upstream.status}.`,
+      );
     }
   } catch (apiErr) {
     console.warn("OpenRouter request failed:", apiErr.message);

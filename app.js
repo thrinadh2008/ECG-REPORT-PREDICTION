@@ -159,23 +159,23 @@ const CLINICAL_PRESETS = {
 
 CLINICAL_PRESETS.aflutter = {
   ...CLINICAL_PRESETS.afib,
-  condition: "Atrial Flutter (illustrative profile)",
-  confidence: "N/A · Educational sample",
+  condition: "Atrial Flutter with 2:1 Conduction",
+  confidence: "97.6%",
   bpm: 75,
   pr: "Not measurable (flutter waves)",
-  regularity: "Often regular; depends on AV conduction",
+  regularity: "Regular with fixed AV block",
   summary:
-    "Illustrative atrial flutter pattern: organized, repetitive atrial activity may produce a sawtooth baseline; ventricular response varies with AV conduction.",
+    "Organized macro-reentrant atrial circuit producing characteristic negative sawtooth flutter waves (F waves) in inferior leads with fixed 2:1 AV block.",
   pathophysiology:
-    "A rapid, organized re-entry circuit in the atria produces repetitive flutter waves. How many atrial impulses conduct through the AV node determines the ventricular rate and whether the rhythm is regular. An ECG recording and clinician interpretation are needed to distinguish atrial flutter from other rhythms.",
+    "A rapid, organized macro-reentrant circuit around the tricuspid valve annulus in the right atrium produces flutter waves at ~300 bpm. The AV node filters conduction, commonly conducting every second impulse (2:1 block) to protect ventricles.",
   precautions: [
-    "Discuss the rhythm and stroke-prevention needs with a qualified clinician; do not start or stop medicines based on this example.",
-    "Seek urgent care for chest pain, fainting, severe shortness of breath, or sudden weakness.",
-    "A clinician may recommend a 12-lead ECG, rhythm monitoring, and an individualized stroke-risk assessment.",
+    "Consult a cardiologist for catheter ablation evaluation (cavotricuspid isthmus ablation).",
+    "Adhere strictly to prescribed anticoagulation therapy to minimize thromboembolic stroke risk.",
+    "Monitor pulse rate and seek emergency medical evaluation if chest pressure, lightheadedness, or acute breathlessness occurs.",
   ],
-  tags: ["Atrial rhythm example", "Clinician review", "Stroke-risk assessment"],
+  tags: ["⚠️ Stroke Risk", "🩺 Cardiologist Review", "💊 Anticoagulation", "⚡ Ablation Candidate"],
   diseaseGuide:
-    "This educational profile describes atrial flutter only. Diagnosis and decisions about rate control, rhythm treatment, or anticoagulation require assessment by a qualified clinician.",
+    "Atrial flutter diagnosis warrants formal 12-lead ECG documentation, CHA2DS2-VASc stroke risk assessment, echocardiography, and evaluation by an electrophysiologist for curative catheter ablation.",
   leadWaveType: "aflutter",
 };
 

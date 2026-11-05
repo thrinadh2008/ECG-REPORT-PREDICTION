@@ -1,0 +1,12 @@
+{
+  "name": "cardio-ecg-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "grant:clinician": "node scripts/grant-clinician.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.5.0"
+  }
+}

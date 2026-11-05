@@ -1,0 +1,35 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null
+        && (request.auth.token.firebase.sign_in_provider == 'anonymous'
+          || request.auth.token.email_verified == true);
+    }
+
+    function clinician() {
+      return signedIn() && request.auth.token.get('clinician', false) == true;
+    }
+
+    match /reports/{patientId}/{reportId} {
+      allow create: if signedIn()
+        && request.auth.uid == patientId
+        && request.resource != null
+        && resource == null
+        && request.resource.size > 0
+        && request.resource.size <= 10485760
+        && request.resource.contentType in [
+          'application/pdf',
+          'image/jpeg',
+          'image/png'
+        ]
+        && request.resource.metadata.reportId == reportId;
+
+      allow read: if signedIn()
+        && (request.auth.uid == patientId || clinician());
+
+      allow update: if false;
+      allow delete: if signedIn() && request.auth.uid == patientId;
+    }
+  }
+}

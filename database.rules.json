@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "analysisHistory": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".indexOn": ["createdAt"],
+        "$recordId": {
+          ".write": "auth != null && auth.uid == $uid",
+          ".validate": "newData.numChildren() == 6 && newData.hasChildren(['condition', 'stageTitle', 'stageClass', 'bpm', 'createdAt', 'source']) && newData.child('condition').isString() && newData.child('condition').val().length <= 140 && newData.child('stageTitle').isString() && newData.child('stageTitle').val().length <= 120 && (newData.child('stageClass').val() == 'st-1' || newData.child('stageClass').val() == 'st-2' || newData.child('stageClass').val() == 'st-3' || newData.child('stageClass').val() == 'st-4') && newData.child('bpm').isNumber() && newData.child('bpm').val() >= 0 && newData.child('bpm').val() <= 400 && newData.child('createdAt').isNumber() && newData.child('createdAt').val() > 0 && (newData.child('source').val() == 'sample' || newData.child('source').val() == 'upload')"
+        }
+      }
+    },
+    "reports": {
+      ".indexOn": ["patientId"],
+      ".read": "auth != null && (auth.token.clinician == true || (auth.uid != null && query.orderByChild == 'patientId' && query.equalTo == auth.uid))",
+      "$reportId": {
+        ".write": "auth != null && ((!data.exists() && auth.token.firebase.sign_in_provider == 'anonymous' && newData.child('patientId').val() == auth.uid && newData.child('reviewStatus').val() == 'pending') || (data.exists() && newData.exists() && auth.token.clinician == true && newData.child('reviewStatus').val() == 'reviewed' && newData.child('clinicianNote').isString() && newData.child('clinicianNote').val().length > 0 && newData.child('clinicianNote').val().length <= 2000 && newData.child('patientId').val() == data.child('patientId').val() && newData.child('storagePath').val() == data.child('storagePath').val() && newData.child('contentType').val() == data.child('contentType').val() && newData.child('sizeBytes').val() == data.child('sizeBytes').val() && newData.child('createdAt').val() == data.child('createdAt').val()) || (data.exists() && !newData.exists() && data.child('patientId').val() == auth.uid && data.child('reviewStatus').val() == 'pending'))",
+        ".validate": "newData.hasChildren(['patientId', 'storagePath', 'contentType', 'sizeBytes', 'reviewStatus', 'createdAt']) && newData.child('patientId').isString() && newData.child('storagePath').val() == 'reports/' + newData.child('patientId').val() + '/' + $reportId && (newData.child('contentType').val() == 'application/pdf' || newData.child('contentType').val() == 'image/jpeg' || newData.child('contentType').val() == 'image/png') && newData.child('sizeBytes').isNumber() && newData.child('sizeBytes').val() > 0 && newData.child('sizeBytes').val() <= 10485760 && newData.child('createdAt').isNumber() && ((newData.child('reviewStatus').val() == 'pending' && newData.child('clinicianNote').val() == null && newData.child('reviewedAt').val() == null) || (auth.token.clinician == true && newData.child('reviewStatus').val() == 'reviewed' && newData.child('clinicianNote').isString() && newData.child('clinicianNote').val().length > 0 && newData.child('clinicianNote').val().length <= 2000 && newData.child('reviewedAt').isNumber())) && (!data.exists() || (newData.child('patientId').val() == data.child('patientId').val() && newData.child('storagePath').val() == data.child('storagePath').val() && newData.child('contentType').val() == data.child('contentType').val() && newData.child('sizeBytes').val() == data.child('sizeBytes').val() && newData.child('createdAt').val() == data.child('createdAt').val()))"
+      }
+    }
+  }
+}

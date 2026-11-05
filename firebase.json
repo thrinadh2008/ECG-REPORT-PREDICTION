@@ -1,0 +1,44 @@
+{
+  "hosting": {
+    "public": ".",
+    "headers": [
+      {
+        "source": "/app.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store, max-age=0"
+          }
+        ]
+      },
+      {
+        "source": "/firebase-config.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store, max-age=0"
+          }
+        ]
+      }
+    ],
+    "ignore": [
+      "firebase.json",
+      "database.rules.json",
+      "storage.rules",
+      "README.md",
+      "package.json",
+      "package-lock.json",
+      ".firebaserc",
+      ".gitignore",
+      "scripts/**",
+      "node_modules/**",
+      ".*"
+    ]
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

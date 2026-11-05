@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioAI — Instagram Reel & Post Kit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070D1A;
+      --card-bg: #0F172A;
+      --card-border: #1E293B;
+      --primary-blue: #2563EB;
+      --primary-cyan: #06B6D4;
+      --accent-red: #EF4444;
+      --text-white: #F8FAFC;
+      --text-dim: #94A3B8;
+      --gradient-brand: linear-gradient(135deg, #1E3A8A 0%, #2563EB 50%, #06B6D4 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(180deg, #0B1329 0%, #070D1A 100%);
+      border-bottom: 1px solid #1E293B;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-badge {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: #38BDF8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-gradient {
+      background: var(--gradient-brand);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-gradient:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+    }
+
+    .btn-secondary {
+      background: #1E293B;
+      color: #F8FAFC;
+      border: 1px solid #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #334155;
+      color: #FFFFFF;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+
+    /* Instagram Phone Mockup */
+    .phone-wrapper {
+      position: sticky;
+      top: 6rem;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .phone-frame {
+      background: #000000;
+      border: 10px solid #1E293B;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.25);
+      position: relative;
+    }
+
+    /* Notch */
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 22px;
+      background: #1E293B;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 30;
+    }
+
+    /* Video player container 9:16 aspect ratio */
+    .video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Overlay Controls on Video */
+    .video-overlay-ui {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 1rem 1.25rem 1rem;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 20%, transparent 70%, rgba(0,0,0,0.85) 100%);
+    }
+
+    .reel-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #FFF;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .reel-right-actions {
+      position: absolute;
+      right: 12px;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: center;
+      pointer-events: auto;
+    }
+
+    .reel-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .action-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: transform 0.2s ease;
+    }
+
+    .action-icon-circle:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .reel-bottom-info {
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 80%;
+    }
+
+    .user-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .user-tag span.badge {
+      background: #06B6D4;
+      color: #000;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+    }
+
+    .reel-caption-teaser {
+      font-size: 0.825rem;
+      line-height: 1.35;
+      color: #E2E8F0;
+    }
+
+    .reel-sound-track {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #38BDF8;
+      font-weight: 500;
+    }
+
+    /* Player Controls Bar */
+    .player-controls {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    /* Content Area */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #1E293B;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .caption-box {
+      background: #070D1A;
+      border: 1px solid #1E293B;
+      border-radius: 14px;
+      padding: 1.25rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+      user-select: all;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .caption-box::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .caption-box::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+
+    .badge-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tag-pill {
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #93C5FD;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Carousel Preview */
+    .carousel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .carousel-item {
+      background: #070D1A;
+      border: 1px solid #1E293B;
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .carousel-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #06B6D4;
+    }
+
+    .carousel-heading {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #FFF;
+    }
+
+    .carousel-desc {
+      font-size: 0.75rem;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10B981;
+      color: #FFFFFF;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      display: none;
+      z-index: 100;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <a href="/index.html" class="brand">
+      <div class="brand-icon">🫀</div>
+      <div class="brand-title">CardioAI</div>
+      <div class="brand-badge">Instagram Creator Kit</div>
+    </a>
+    <div class="header-actions">
+      <a href="/cardioai_instagram_post.mp4" download="cardioai_instagram_post.mp4" class="btn btn-gradient">
+        ⬇️ Download Video (MP4)
+      </a>
+      <a href="/index.html" class="btn btn-secondary">
+        🌐 Back to ECG Studio
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main>
+    
+    <!-- Phone Simulator -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="video-container">
+          <video id="reelVideo" autoplay loop playsinline>
+            <source src="/cardioai_instagram_post.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          
+          <!-- Instagram Reel UI Overlay -->
+          <div class="video-overlay-ui">
+            <div class="reel-top-bar">
+              <span>Reels</span>
+              <span>📷</span>
+            </div>
+
+            <div class="reel-right-actions">
+              <div class="reel-action-btn" onclick="toggleLike(this)">
+                <div class="action-icon-circle">❤️</div>
+                <span id="likeCount">12.8K</span>
+              </div>
+              <div class="reel-action-btn">
+                <div class="action-icon-circle">💬</div>
+                <span>842</span>
+              </div>
+              <div class="reel-action-btn" onclick="copyCaption()">
+                <div class="action-icon-circle">🚀</div>
+                <span>Share</span>
+              </div>
+              <div class="reel-action-btn">
+                <div class="action-icon-circle">🔖</div>
+                <span>Save</span>
+              </div>
+            </div>
+
+            <div class="reel-bottom-info">
+              <div class="user-tag">
+                <span>cardioai.studio</span>
+                <span class="badge">✓</span>
+              </div>
+              <div class="reel-caption-teaser">
+                Can AI detect heart attacks in 3 seconds? 🫀⚡ Built with OpenRouter Vision AI & Web Canvas...
+              </div>
+              <div class="reel-sound-track">
+                <span>🎵 CardioAI Telemetry Beat — Original Audio</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Playback Controls -->
+      <div class="player-controls">
+        <button class="btn btn-secondary" onclick="togglePlay()">⏯️ Play / Pause</button>
+        <button class="btn btn-secondary" onclick="toggleMute()" id="muteBtn">🔊 Sound: Unmuted</button>
+        <button class="btn btn-secondary" onclick="restartVideo()">🔄 Replay</button>
+      </div>
+    </div>
+
+    <!-- Right Side: Post Kit & Copyable Caption -->
+    <div class="content-area">
+
+      <!-- Action Card -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(6, 182, 212, 0.15) 100%); border-color: rgba(6, 182, 212, 0.4);">
+        <div class="card-header" style="border: none; margin-bottom: 0.5rem; padding-bottom: 0;">
+          <h2 class="card-title">🚀 Ready for Instagram Reels & Video Posts</h2>
+          <a href="/cardioai_instagram_post.mp4" download="cardioai_instagram_post.mp4" class="btn btn-gradient">
+            ⬇️ Download MP4 (1080x1920)
+          </a>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.95rem;">
+          High-definition 1080x1920 vertical video format with synchronized cardiac telemetry audio, glowing Lead II waveforms, real 12-lead ECG scanning beam, 4-stage risk stratification, and official hospital print report showcase.
+        </p>
+      </div>
+
+      <!-- Caption Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📝 Optimized Instagram Caption & Hashtags</h2>
+          <button class="btn btn-gradient" onclick="copyCaption()">
+            📋 Copy Complete Caption
+          </button>
+        </div>
+        <div class="caption-box" id="captionText">Can Artificial Intelligence detect a heart attack in 3 seconds? 🫀⚡
+
+Reading a 12-Lead ECG used to take minutes of manual rhythm analysis...
+
+Meet CardioAI — our next-gen Clinical Rhythm & Diagnostic Studio built to automate real-time cardiac triage:
+
+🔬 What it does:
+1️⃣ Ingests any 12-lead ECG (PDF, phone camera photo, scan, or paper printout)
+2️⃣ Instant Multi-Lead Vision Scan with contrast filters & millimeter grid overlay
+3️⃣ 4-Stage Risk Stratification:
+   • Stage 1: Optimal Sinus Rhythm
+   • Stage 2: Sinus Bradycardia
+   • Stage 3: Atrial Fibrillation (Irregular RR)
+   • Stage 4: Acute STEMI / Heart Attack (Emergency Dispatch)
+4️⃣ Real-time biomarker extraction: Heart Rate, PR interval, QRS duration, QTc, and ST elevation!
+5️⃣ 1-Click Hospital Summary Report matching gold-standard Cardiologist consultation templates!
+
+🛠️ Tech Stack:
+• OpenRouter Vision AI (Multimodal Analysis)
+• Interactive HTML5 Canvas Oscilloscope with telemetry audio
+• Node.js & Production Railway Cloud deployment
+
+🌐 Test it live right now:
+👉 ecg-report-prediction-production.up.railway.app
+
+❤️ DOUBLE TAP if you love AI solving real healthcare challenges!
+💬 COMMENT "ECG" below and I’ll DM you the complete GitHub repository & live link!
+🔖 SAVE this post for your next machine learning or healthtech project!
+
+.
+.
+.
+#Cardiology #HealthTech #ArtificialIntelligence #MachineLearning #DeepLearning #ECG #MedTech #WebDev #JavaScript #Python #OpenSource #TechReels #CodingLife #SoftwareEngineer #AIRevolution #CardioAI #HospitalTech #Biomedical #STEM #DeveloperCommunity</div>
+      </div>
+
+      <!-- Carousel Cards for Multi-Slide Post -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📑 Instagram Carousel Slide Structure</h2>
+          <span class="brand-badge">Optional 5-Slide Format</span>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 1rem;">
+          If you prefer posting an Instagram Carousel alongside your Reel, here is the structured slide progression:
+        </p>
+        <div class="carousel-grid">
+          <div class="carousel-item">
+            <span class="carousel-num">SLIDE 1</span>
+            <span class="carousel-heading">The Hook</span>
+            <p class="carousel-desc">"Can AI catch a heart attack in 3 seconds?" + Glowing Lead II waveform.</p>
+          </div>
+          <div class="carousel-item">
+            <span class="carousel-num">SLIDE 2</span>
+            <span class="carousel-heading">ECG Ingestion</span>
+            <p class="carousel-desc">Laser scanning over 12-lead ECG PDF & mobile photo uploads.</p>
+          </div>
+          <div class="carousel-item">
+            <span class="carousel-num">SLIDE 3</span>
+            <span class="carousel-heading">Risk Triage</span>
+            <p class="carousel-desc">4-Stage classification from Sinus Rhythm to Acute STEMI Infarction.</p>
+          </div>
+          <div class="carousel-item">
+            <span class="carousel-num">SLIDE 4</span>
+            <span class="carousel-heading">Clinical Report</span>
+            <p class="carousel-desc">Hospital-grade 8-section summary report with 1-click print & PDF.</p>
+          </div>
+          <div class="carousel-item">
+            <span class="carousel-num">SLIDE 5</span>
+            <span class="carousel-heading">Call To Action</span>
+            <p class="carousel-desc">Live Railway URL + "Comment CODE for GitHub link & Double tap!"</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    ✅ Caption copied to clipboard! Ready to paste into Instagram.
+  </div>
+
+  <script>
+    const video = document.getElementById('reelVideo');
+    const muteBtn = document.getElementById('muteBtn');
+    const toast = document.getElementById('toast');
+
+    function togglePlay() {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+
+    function toggleMute() {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? '🔇 Sound: Muted' : '🔊 Sound: Unmuted';
+    }
+
+    function restartVideo() {
+      video.currentTime = 0;
+      video.play();
+    }
+
+    function toggleLike(el) {
+      const countEl = document.getElementById('likeCount');
+      if (el.classList.contains('liked')) {
+        el.classList.remove('liked');
+        countEl.textContent = '12.8K';
+      } else {
+        el.classList.add('liked');
+        countEl.textContent = '12.9K';
+      }
+    }
+
+    function copyCaption() {
+      const text = document.getElementById('captionText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3000);
+      }).catch(err => {
+        alert('Could not copy text automatically. Please select and copy manually.');
+      });
+    }
+
+    // Try unmuting automatically if permitted by browser
+    video.muted = false;
+    video.play().catch(() => {
+      // Autoplay with sound may be blocked by browser policy, fall back to muted
+      video.muted = true;
+      video.play();
+      muteBtn.textContent = '🔇 Sound: Muted (Click to Unmute)';
+    });
+  </script>
+</body>
+</html>

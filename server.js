@@ -98,14 +98,14 @@ function parseModelJsonSafely(rawText) {
   // 1. Direct parse attempt
   try {
     return JSON.parse(trimmed);
-  } catch (_) {}
+  } catch (_) { }
 
   // 2. Code block extraction (```json ... ``` or ``` ...)
   const codeBlockMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   if (codeBlockMatch) {
     try {
       return JSON.parse(codeBlockMatch[1].trim());
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // 3. Find outermost curly braces { ... }
@@ -114,7 +114,7 @@ function parseModelJsonSafely(rawText) {
   if (firstBrace !== -1 && lastBrace > firstBrace) {
     try {
       return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));
-    } catch (_) {}
+    } catch (_) { }
   }
 
   return null;
@@ -174,11 +174,11 @@ function sanitizeAnalysis(val, fileName, focus) {
       Array.isArray(val.precautions) && val.precautions.length > 0
         ? val.precautions.slice(0, 6).map((s) => String(s).slice(0, 250))
         : [
-            "Maintain balanced hydration and electrolytes.",
-            "Follow a heart-healthy low-sodium DASH or Mediterranean dietary pattern.",
-            "Avoid excessive stimulants, energy drinks, and unmonitored decongestants.",
-            "Consult with a licensed healthcare professional for definitive clinical review.",
-          ],
+          "Maintain balanced hydration and electrolytes.",
+          "Follow a heart-healthy low-sodium DASH or Mediterranean dietary pattern.",
+          "Avoid excessive stimulants, energy drinks, and unmonitored decongestants.",
+          "Consult with a licensed healthcare professional for definitive clinical review.",
+        ],
     tags:
       Array.isArray(val.tags) && val.tags.length > 0
         ? val.tags.slice(0, 4).map((t) => String(t).slice(0, 30))
@@ -355,20 +355,19 @@ async function analyzeReport(req, res) {
   if (OPENROUTER_API_KEY && !OPENROUTER_API_KEY.startsWith("YOUR_")) {
     const filePart = isPdf
       ? {
-          type: "file",
-          file: {
-            filename: fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`,
-            file_data: request.dataUrl,
-          },
-        }
+        type: "file",
+        file: {
+          filename: fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`,
+          file_data: request.dataUrl,
+        },
+      }
       : { type: "image_url", image_url: { url: request.dataUrl } };
 
     const content = [
       {
         type: "text",
-        text: `Analyze this ECG report thoroughly. ${
-          focus ? `Specifically evaluate for: ${focus}. ` : ""
-        }Extract rhythm, heart rate, PR, QRS, QTc, ST elevation/depression, stage (1 to 4), pathophysiology, precautions, and determine if this is high risk requiring immediate emergency doctor consultation. Return valid JSON only.`,
+        text: `Analyze this ECG report thoroughly. ${focus ? `Specifically evaluate for: ${focus}. ` : ""
+          }Extract rhythm, heart rate, PR, QRS, QTc, ST elevation/depression, stage (1 to 4), pathophysiology, precautions, and determine if this is high risk requiring immediate emergency doctor consultation. Return valid JSON only.`,
       },
       filePart,
     ];
@@ -446,6 +445,8 @@ const MIME_TYPES = {
   ".svg": "image/svg+xml",
   ".pdf": "application/pdf",
   ".ico": "image/x-icon",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
 };
 
 const server = http.createServer((req, res) => {
@@ -487,6 +488,33 @@ const server = http.createServer((req, res) => {
 
       const ext = path.extname(safePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || "application/octet-stream";
+
+      if (ext === ".mp4" || ext === ".webm") {
+        const range = req.headers.range;
+        const total = stats.size;
+        if (range) {
+          const parts = range.replace(/bytes=/, "").split("-");
+          const start = parseInt(parts[0], 10);
+          const end = parts[1] ? parseInt(parts[1], 10) : total - 1;
+          const chunksize = end - start + 1;
+          res.writeHead(206, {
+            "Content-Range": `bytes ${start}-${end}/${total}`,
+            "Accept-Ranges": "bytes",
+            "Content-Length": chunksize,
+            "Content-Type": contentType,
+          });
+          fs.createReadStream(safePath, { start, end }).pipe(res);
+          return;
+        } else {
+          res.writeHead(200, {
+            "Content-Length": total,
+            "Accept-Ranges": "bytes",
+            "Content-Type": contentType,
+          });
+          fs.createReadStream(safePath).pipe(res);
+          return;
+        }
+      }
 
       res.writeHead(200, {
         "Content-Type": contentType,

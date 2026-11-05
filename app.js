@@ -434,9 +434,11 @@ function renderEcgToCanvas(canvasId, presetKey) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width * (window.devicePixelRatio || 1);
-  canvas.height = Math.max(260, rect.height) * (window.devicePixelRatio || 1);
+  const rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : { width: 800, height: 220 };
+  const parentWidth = rect.width > 50 ? rect.width : 800;
+  const parentHeight = rect.height > 50 ? rect.height : 220;
+  canvas.width = parentWidth * (window.devicePixelRatio || 1);
+  canvas.height = Math.max(200, parentHeight) * (window.devicePixelRatio || 1);
 
   const w = canvas.width;
   const h = canvas.height;
@@ -644,6 +646,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize initial canvas preview
   renderEcgToCanvas("ecg-canvas-render", "normal");
   oscMonitor.setPreset("normal");
+  updateFormalPrintReport({
+    condition: CLINICAL_PRESETS.normal.condition,
+    stageTitle: CLINICAL_PRESETS.normal.stageTitle,
+    stageClass: CLINICAL_PRESETS.normal.stageClass,
+    confidence: CLINICAL_PRESETS.normal.confidence,
+    severityLabel: CLINICAL_PRESETS.normal.severityLabel,
+    bpm: CLINICAL_PRESETS.normal.bpm,
+    pr: CLINICAL_PRESETS.normal.pr,
+    qrs: CLINICAL_PRESETS.normal.qrs,
+    qtc: CLINICAL_PRESETS.normal.qtc,
+    st: CLINICAL_PRESETS.normal.st,
+    regularity: CLINICAL_PRESETS.normal.regularity,
+    pathophysiology: CLINICAL_PRESETS.normal.pathophysiology,
+    precautions: CLINICAL_PRESETS.normal.precautions,
+    diseaseGuide: CLINICAL_PRESETS.normal.diseaseGuide,
+    isHighRisk: false,
+    reportId: "CRD-849204-NORMAL",
+    fileName: "Benchmark Sample ECG",
+  });
 
   // AUDIO TOGGLE
   audioToggle?.addEventListener("click", () => {
@@ -1007,8 +1028,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const randId = Math.floor(100000 + Math.random() * 900000);
-    reportUuid.textContent = `AI-${randId}-${className.toUpperCase()}`;
+    const reportGeneratedId = `AI-${randId}-${className.toUpperCase()}`;
+    reportUuid.textContent = reportGeneratedId;
     reportTimestamp.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    updateFormalPrintReport({
+      condition,
+      stageTitle: analysis.stageTitle,
+      stageClass: className,
+      confidence: analysis.confidence,
+      severityLabel: analysis.severityLabel,
+      bpm: analysis.bpm,
+      pr: analysis.pr,
+      qrs: analysis.qrs,
+      qtc: analysis.qtc,
+      st: analysis.st,
+      regularity: analysis.regularity,
+      pathophysiology: analysis.pathophysiology,
+      precautions: analysis.precautions,
+      diseaseGuide: analysis.diseaseGuide,
+      isHighRisk,
+      reportId: reportGeneratedId,
+      fileName: reportFile.name,
+    });
 
     // Update live monitor
     const leadTitle = document.getElementById("osc-lead-title");
@@ -1068,8 +1110,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Metadata
     const randId = Math.floor(100000 + Math.random() * 900000);
-    reportUuid.textContent = `CRD-${randId}-${p.stageClass.toUpperCase()}`;
+    const reportGeneratedId = `CRD-${randId}-${p.stageClass.toUpperCase()}`;
+    reportUuid.textContent = reportGeneratedId;
     reportTimestamp.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    updateFormalPrintReport({
+      condition: p.condition,
+      stageTitle: p.stageTitle,
+      stageClass: p.stageClass,
+      confidence: p.confidence,
+      severityLabel: p.severityLabel,
+      bpm: p.bpm,
+      pr: p.pr,
+      qrs: p.qrs,
+      qtc: p.qtc,
+      st: p.st,
+      regularity: p.regularity,
+      pathophysiology: p.pathophysiology,
+      precautions: p.precautions,
+      diseaseGuide: p.diseaseGuide,
+      isHighRisk: p.isHighRisk,
+      reportId: reportGeneratedId,
+      fileName: "Benchmark Sample ECG",
+    });
 
     // EMERGENCY HIGH-RISK BANNER LOGIC
     if (p.isHighRisk && !p.isTargetedProfile) {
@@ -1079,6 +1142,108 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       emergencyBanner.classList.remove("active");
       resultsArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function updateFormalPrintReport({
+    condition,
+    stageTitle,
+    stageClass,
+    confidence,
+    severityLabel,
+    bpm,
+    pr,
+    qrs,
+    qtc,
+    st,
+    regularity,
+    pathophysiology,
+    precautions,
+    diseaseGuide,
+    isHighRisk,
+    reportId,
+    fileName,
+  }) {
+    const pCond = document.getElementById("print-condition");
+    const pStage = document.getElementById("print-stage");
+    const pConf = document.getElementById("print-confidence");
+    const pRepId = document.getElementById("print-report-id");
+    const pRepDate = document.getElementById("print-report-date");
+    const pFile = document.getElementById("print-filename");
+    const pRisk = document.getElementById("print-risk-level");
+    const pHr = document.getElementById("print-hr-val");
+    const pReg = document.getElementById("print-regularity-val");
+    const pMHr = document.getElementById("print-m-hr");
+    const pMPr = document.getElementById("print-m-pr");
+    const pMQrs = document.getElementById("print-m-qrs");
+    const pMQtc = document.getElementById("print-m-qtc");
+    const pMSt = document.getElementById("print-m-st");
+    const pMReg = document.getElementById("print-m-regularity");
+    const pPath = document.getElementById("print-pathophysiology");
+    const pPrec = document.getElementById("print-precautions");
+    const pGuide = document.getElementById("print-disease-guide");
+    const pEmerg = document.getElementById("print-emergency-notice");
+    const pImg = document.getElementById("print-ecg-img");
+    const pCanvas = document.getElementById("print-ecg-canvas");
+
+    if (pCond) pCond.textContent = condition || "Normal Sinus Rhythm";
+    if (pStage) {
+      pStage.textContent = stageTitle || "STAGE 1: OPTIMAL & NORMAL";
+      pStage.className = `print-stage-tag ${stageClass || "st-1"}`;
+    }
+    if (pConf) pConf.textContent = confidence || "98.4%";
+    if (pRepId) pRepId.textContent = reportId || "CRD-849204-X";
+    if (pRepDate) pRepDate.textContent = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
+    if (pFile) pFile.textContent = fileName || "ECG-Report-Tracing";
+    if (pRisk) pRisk.textContent = severityLabel || "Optimal · Low Risk";
+    if (pHr) pHr.textContent = `${bpm || 72} BPM`;
+    if (pReg) pReg.textContent = regularity || "Regular (Consistent R-R)";
+    if (pMHr) pMHr.textContent = `${bpm || 72} BPM`;
+    if (pMPr) pMPr.textContent = pr || "156 ms";
+    if (pMQrs) pMQrs.textContent = qrs || "84 ms";
+    if (pMQtc) pMQtc.textContent = qtc || "412 ms";
+    if (pMSt) pMSt.textContent = st || "0.0 mm";
+    if (pMReg) pMReg.textContent = regularity || "Regular";
+    if (pPath) pPath.textContent = pathophysiology || "Electrical impulses propagate sequentially through the cardiac syncytium without regional delay.";
+
+    if (pPrec) {
+      const list = Array.isArray(precautions) && precautions.length > 0 ? precautions : [
+        "Maintain balanced hydration and essential electrolytes (potassium, magnesium).",
+        "Adopt a heart-healthy dietary pattern (DASH / Mediterranean).",
+        "Maintain 150 minutes of weekly aerobic exercise.",
+        "Avoid excessive stimulants, energy drinks, and tobacco."
+      ];
+      pPrec.innerHTML = `<ul>${list.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+    }
+
+    if (pGuide) {
+      pGuide.innerHTML = `
+        <ul>
+          <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Clinical bedside validation by attending physician.</li>
+          <li><strong>Transthoracic Echocardiogram (Echo):</strong> Evaluates chamber dimensions & left ventricular ejection fraction (LVEF).</li>
+          <li><strong>High-Sensitivity Cardiac Troponin-I:</strong> Biomarker assay to rule out acute ischemia or myocardial injury.</li>
+          <li><strong>24-48 Hour Holter Telemetry:</strong> Evaluates intermittent transient arrhythmia burden.</li>
+        </ul>
+      `;
+    }
+
+    if (pEmerg) {
+      pEmerg.style.display = isHighRisk ? "block" : "none";
+    }
+
+    // Waveform rendering for print
+    if (customUploadedFile && previewImg && previewImg.style.display !== "none" && previewImg.src) {
+      if (pImg) {
+        pImg.src = previewImg.src;
+        pImg.style.display = "block";
+      }
+      if (pCanvas) pCanvas.style.display = "none";
+    } else {
+      if (pImg) pImg.style.display = "none";
+      if (pCanvas) {
+        pCanvas.style.display = "block";
+        renderEcgToCanvas("print-ecg-canvas", stageClass === "st-4" ? "stemi" : stageClass === "st-3" ? "afib" : stageClass === "st-2" ? "brady" : "normal");
+      }
     }
   }
 

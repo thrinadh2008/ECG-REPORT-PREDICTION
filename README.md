@@ -57,7 +57,7 @@ $env:OPENROUTER_API_KEY = [System.Net.NetworkCredential]::new("", $secureKey).Pa
 npm start
 ```
 
-Open <http://localhost:43817>. By default, the server uses OpenRouter's `openrouter/free` model; you can set `OPENROUTER_MODEL` to a specific image-capable model ID. The API key applies only to the current PowerShell window; restart the server after setting it. The server binds to `0.0.0.0` and uses port `43817` by default; set `PORT` to override it. The API key is never sent to the browser or written to project files. The hosted static demo does not include this local Node API.
+Open <http://localhost:43817>. By default, the server uses OpenRouter's `openrouter/auto` model; you can set `OPENROUTER_MODEL` to a specific image-capable model ID. The API key applies only to the current PowerShell window; restart the server after setting it. The server binds to `0.0.0.0` and uses port `43817` by default; Railway supplies its own `PORT`. The API key is never sent to the browser or written to project files. If the key is not configured or the model request fails, the server returns an error instead of generating an image- or filename-based sample result. The hosted static demo does not include this local Node API.
 
 Firebase Authentication uses anonymous sessions for local report history. Analysis summaries (condition, stage, BPM, timestamp, and sample/upload source) sync in real time under `analysisHistory/{uid}`; original ECG files and their filenames are not stored in Realtime Database. Per-user read/write rules are in `database.rules.json`. Deploy those rules with `firebase.cmd deploy --only database --project cardio-ebcfc`.
 

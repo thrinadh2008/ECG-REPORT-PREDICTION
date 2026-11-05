@@ -1171,12 +1171,12 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="report-item">
         <div class="report-topline">
           <div>
-            <strong style="color: #fff; font-size: 14px;">${escapeHtml(r.condition)}</strong>
+            <strong style="color: var(--color-navy, #0F172A); font-size: 14px;">${escapeHtml(r.condition)}</strong>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">
               ${escapeHtml(r.fileName)} · ${escapeHtml(r.date)} at ${escapeHtml(r.time)} · ${escapeHtml(r.bpm)} BPM
             </div>
           </div>
-          <span class="status-badge ${r.stageClass === "st-4" ? "reviewed" : ""}" style="${r.stageClass === "st-4" ? "background: rgba(239, 68, 68, 0.2); color: #fca5a5;" : ""}">
+          <span class="status-badge ${r.stageClass === "st-4" ? "reviewed" : ""}" style="${r.stageClass === "st-4" ? "background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5;" : ""}">
             ${escapeHtml(r.stageTitle)}
           </span>
         </div>

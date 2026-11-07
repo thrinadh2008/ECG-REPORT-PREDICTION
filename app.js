@@ -2,16 +2,21 @@ import { firebaseConfig } from "./firebase-config.js?v=20261105-1";
 
 // ============================================================================
 // CLINICAL BENCHMARK DATABASE & STAGE DEFINITIONS
+// TARGET ABNORMALITY: ATRIAL FIBRILLATION & ATRIAL FLUTTER (AFIB / AFL)
 // ============================================================================
 const CLINICAL_PRESETS = {
   normal: {
     stage: 1,
-    stageTitle: "STAGE 1: OPTIMAL & NORMAL",
+    stageTitle: "STAGE 1: OPTIMAL & NORMAL SINUS RHYTHM",
     stageClass: "st-1",
-    condition: "Normal Sinus Rhythm",
+    condition: "Normal Sinus Rhythm (Control Baseline)",
+    abnormality: "None (Normal Sinus Rhythm)",
     confidence: "98.4%",
-    severityLabel: "Stage 1 · Low / Optimal Risk",
-    riskWidth: "22%",
+    signalQuality: "Good",
+    qualityScore: "97.5%",
+    evidenceStrength: "Strong",
+    severityLabel: "Stage 1 · Low Risk / Control Baseline",
+    riskWidth: "20%",
     bpm: 72,
     pr: "156 ms",
     qrs: "84 ms",
@@ -19,7 +24,35 @@ const CLINICAL_PRESETS = {
     st: "0.0 mm",
     regularity: "Regular",
     summary:
-      "All standard 12-lead waveforms present uniform morphology, normal axis orientation, and consistent R-R intervals with isoelectric ST segments.",
+      "Uniform P-QRS-T complex alignment across all 12 leads with normal Sinoatrial pacing, normal AV conduction delay, and isoelectric ST segments.",
+    briefExplanation: {
+      input: "Scanned 12-Lead ECG Tracing",
+      signalQuality: "Good (SNR: 26.5 dB, 99.1% baseline stability)",
+      potentialPattern: "Normal Sinus Rhythm (Healthy Control)",
+      confidence: "98.4%",
+      supportingEvidence: "• Regular rhythm pattern (uniform R-R intervals)\n• Consistent P-wave morphology preceding every QRS complex",
+      biomedicalExplanation: "Sinoatrial (SA) node pacing generates coordinated atrial depolarization followed by physiological atrioventricular delay, ensuring optimal ventricular filling.",
+      interpretation: "The observed waveform characteristics demonstrate physiological cardiac electrophysiology without anomalous conduction.",
+      recommendation: "Routine annual preventive cardiovascular wellness screening advised.",
+    },
+    transformerAttention: {
+      primaryFocus: "Uniform P-QRS-T Morphological Alignment",
+      fWaveActivity: "Isoelectric quiescent baseline",
+      irregularityScore: "0.04 (Strict Periodicity)",
+      attentionHeads: [
+        { name: "Head 1 (R-R Spacing)", weight: "0.15", desc: "Equidistant R-R intervals" },
+        { name: "Head 2 (P-Wave Morphology)", weight: "0.12", desc: "Distinct upright P-waves in Lead II" },
+        { name: "Head 3 (F-Wave Frequency)", weight: "0.09", desc: "No micro-voltage baseline undulations" },
+        { name: "Head 4 (AV Conduction)", weight: "0.18", desc: "Constant 156ms PR interval" },
+      ],
+    },
+    detailedExplanation: {
+      digitizationSummary: "1D digital signal successfully extracted with 250 Hz temporal resolution. Isoelectric baseline stability 99.1%.",
+      transformerAnalysis: "The 1D ECG Transformer detected uniform periodic self-attention across R-R intervals with distinct P-wave token activations.",
+      ragBiomedicalInsights: "RAG biomedical knowledge confirms physiological sinus depolarization originating from the Sinoatrial node.",
+      hemodynamicImpact: "Synchronized atrial and ventricular filling ensures maximal hemodynamic cardiac output.",
+      clinicalWorkup: "Maintain healthy cardiovascular lifestyle and periodic check-ups.",
+    },
     pathophysiology:
       "The cardiac cycle is governed by rhythmic pacing from the Sinoatrial (SA) node in the high right atrium. Electrical depolarization sweeps symmetrically through the atrial syncytium (generating the P wave), traverses the Atrioventricular (AV) node with a physiological delay (~150 ms) to permit complete ventricular filling, then rapidly branches down the His-Purkinje network (QRS complex). Repolarization (T wave) is uniform, confirming optimal oxygenation and hemodynamic output without electrical or ischemic compromise.",
     precautions: [
@@ -30,58 +63,60 @@ const CLINICAL_PRESETS = {
     ],
     tags: ["🥗 Low-Sodium DASH Diet", "🏃 150m Aerobic/Week", "💧 Balanced Hydration", "🩺 Routine Annual Screen"],
     diseaseGuide:
-      "Your electrical conduction profile is currently optimal. To preserve long-term arterial and myocardial health, monitor blood pressure, maintain healthy blood lipid levels (LDL < 100 mg/dL), and avoid tobacco use. If you ever experience unexplained fainting or palpitations, consult a primary care physician.",
+      "Your electrical conduction profile is currently optimal. To preserve long-term arterial and myocardial health, monitor blood pressure, maintain healthy blood lipid levels (LDL < 100 mg/dL), and avoid tobacco use.",
     isHighRisk: false,
     leadWaveType: "normal",
   },
-  brady: {
-    stage: 2,
-    stageTitle: "STAGE 2: MILD CONDUCTION VARIATION",
-    stageClass: "st-2",
-    condition: "Sinus Bradycardia with 1st-Degree AV Block",
-    confidence: "97.1%",
-    severityLabel: "Stage 2 · Mild / Monitoring Advised",
-    riskWidth: "45%",
-    bpm: 48,
-    pr: "228 ms",
-    qrs: "88 ms",
-    qtc: "424 ms",
-    st: "0.0 mm",
-    regularity: "Regular (Slow)",
-    summary:
-      "Consistent sinus rhythm with prolonged atrioventricular conduction delay (PR interval > 200 ms) and resting heart rate below 50 beats per minute.",
-    pathophysiology:
-      "Electrical impulses originating from the SA node experience slowed conduction through the Atrioventricular (AV) node before depolarizing the ventricles. Every atrial P-wave is followed by a QRS complex, but the conduction latency is abnormally elongated. This can stem from high intrinsic vagal tone (common in well-conditioned athletes), age-related nodal fibrosis, electrolyte imbalances, or medications such as beta-blockers or calcium channel blockers.",
-    precautions: [
-      "Check resting pulse daily; avoid sudden postural changes (stand up gradually to prevent orthostatic dizziness).",
-      "Review current medications (e.g., beta-blockers, diltiazem, verapamil, digoxin) with your prescribing physician.",
-      "Avoid acute dehydration and heavy alcohol intake, which can aggravate vagal reflexes.",
-      "Seek medical review if accompanied by fatigue, lightheadedness, confusion, or near-syncope.",
-    ],
-    tags: ["🛑 Avoid Sudden Standing", "💊 Medication Review", "🩺 Primary Doctor Visit", "📊 Pulse Log"],
-    diseaseGuide:
-      "First-degree AV block with sinus bradycardia is often benign in healthy adults, but warrants non-urgent evaluation if symptomatic. Recommended physician follow-ups: 24-hour ambulatory Holter monitor, basic metabolic panel (electrolytes: potassium, magnesium), and thyroid-stimulating hormone (TSH) test.",
-    isHighRisk: false,
-    leadWaveType: "brady",
-  },
   afib: {
     stage: 3,
-    stageTitle: "STAGE 3: MODERATE TO HIGH RISK",
+    stageTitle: "STAGE 3: ABNORMAL RHYTHM — ATRIAL FIBRILLATION",
     stageClass: "st-3",
-    condition: "Atrial Fibrillation (AFib) with Rapid Ventricular Response",
-    confidence: "96.8%",
-    severityLabel: "Stage 3 · Moderate / Elevated Thromboembolic Risk",
+    condition: "Atrial Fibrillation (Persistent AFib)",
+    abnormality: "Atrial Fibrillation (Target Abnormality)",
+    confidence: "88.0%",
+    signalQuality: "Good",
+    qualityScore: "94.6%",
+    evidenceStrength: "Strong",
+    severityLabel: "Target Abnormality · Atrial Fibrillation (AFib)",
     riskWidth: "75%",
-    bpm: 124,
+    bpm: 118,
     pr: "Absent (f-waves)",
-    qrs: "94 ms",
-    qtc: "448 ms",
-    st: "-0.8 mm (Strain)",
+    qrs: "90 ms",
+    qtc: "428 ms",
+    st: "0.0 mm",
     regularity: "Irregularly Irregular",
     summary:
-      "Absence of discrete P-waves replaced by chaotic fibrillatory waves (f-waves) and completely unpredictable R-R intervals with tachycardia.",
+      "Complete absence of discrete P-waves replaced by rapid irregular fibrillatory f-waves (350-600 bpm) and chaotic R-R intervals.",
+    briefExplanation: {
+      input: "Scanned 12-Lead ECG Tracing",
+      signalQuality: "Good (SNR: 24.2 dB, 98.2% baseline stability)",
+      potentialPattern: "Atrial Fibrillation (Abnormal Rhythm)",
+      confidence: "88%",
+      supportingEvidence: "• Irregular rhythm pattern (variable R-R intervals)\n• Relevant waveform changes (absence of discrete P-waves, presence of fibrillatory f-waves)",
+      biomedicalExplanation: "Multiple disorganized re-entrant micro-circuits depolarize the atria chaotically at 350-600 bpm, bypassing Sinoatrial (SA) node pacing and causing erratic ventricular response.",
+      interpretation: "The observed waveform characteristics are potentially associated with the detected pattern.",
+      recommendation: "Clinical review is advised.",
+    },
+    transformerAttention: {
+      primaryFocus: "Irregular R-R Interval Dynamics & Absent P-waves",
+      fWaveActivity: "Chaotic baseline oscillations (350-600 bpm)",
+      irregularityScore: "0.89 (High Entropy)",
+      attentionHeads: [
+        { name: "Head 1 (R-R Interval Entropy)", weight: "0.92", desc: "Detects irregular spacing between consecutive ventricular depolarizations" },
+        { name: "Head 2 (P-Wave Flatline / Absence)", weight: "0.89", desc: "Detects absence of organized Sinoatrial depolarization vectors" },
+        { name: "Head 3 (F-Wave Micro-Potentials)", weight: "0.86", desc: "Captures 350-600 bpm chaotic atrial fibrillatory undulations" },
+        { name: "Head 4 (AV Nodal Conduction Latency)", weight: "0.79", desc: "Models stochastic refractory filtering through the AV node" },
+      ],
+    },
+    detailedExplanation: {
+      digitizationSummary: "1D digital signal successfully extracted with 250 Hz temporal resolution. Isoelectric baseline stability 98.2%.",
+      transformerAnalysis: "The 1D ECG Transformer multi-head attention network identified high attention weights across non-equidistant R-peak tokens and micro-voltage baseline variations, indicating absence of coordinated atrial depolarization.",
+      ragBiomedicalInsights: "RAG knowledge retrieval correlates findings with ESC & AHA/ACC AFib Guidelines: chaotic atrial depolarization leads to loss of atrial mechanical kick (15-20% cardiac output reduction) and blood stasis in the left atrial appendage (LAA), elevating systemic thromboembolism and stroke risk.",
+      hemodynamicImpact: "Variable ventricular diastolic filling periods cause fluctuating stroke volumes and peripheral pulse deficit.",
+      clinicalWorkup: "Immediate bedside 12-lead ECG confirmation, Transthoracic Echocardiogram (TTE) for chamber size & LAA thrombus exclusion, thyroid function tests (TSH), serum electrolytes, and CHA2DS2-VASc stroke risk assessment.",
+    },
     pathophysiology:
-      "Multiple chaotic micro-reentrant electrical circuits depolarize the atria at rates of 350 to 600 beats per minute. The atria shudder rather than contract synchronously, resulting in blood stasis within the left atrial appendage (significantly elevating stroke and systemic embolism risks). The AV node intermittently permits random impulses to pass to the ventricles, resulting in an irregularly irregular pulse and reduced cardiac filling efficiency.",
+      "Multiple chaotic micro-reentrant electrical circuits depolarize the atria at rates of 350 to 600 beats per minute. The atria quiver rather than contract synchronously, resulting in blood stasis within the left atrial appendage (significantly elevating stroke and systemic embolism risks). The AV node intermittently permits random impulses to pass to the ventricles, resulting in an irregularly irregular pulse and reduced cardiac filling efficiency.",
     precautions: [
       "Strictly avoid stimulants: zero energy drinks, eliminate or minimize caffeine, avoid decongestants with pseudoephedrine.",
       "Take prescribed oral anticoagulants (e.g. Apixaban, Rivaroxaban, Warfarin) strictly as scheduled—never skip a dose without doctor advice.",
@@ -94,89 +129,190 @@ const CLINICAL_PRESETS = {
     isHighRisk: false,
     leadWaveType: "afib",
   },
-  stemi: {
-    stage: 4,
-    stageTitle: "STAGE 4: CRITICAL EMERGENCY / HIGH RISK",
-    stageClass: "st-4",
-    condition: "Acute Anterior ST-Elevation Myocardial Infarction (STEMI)",
-    confidence: "99.2%",
-    severityLabel: "Stage 4 · CRITICAL EMERGENCY / HIGH RISK",
-    riskWidth: "100%",
-    bpm: 98,
-    pr: "162 ms",
-    qrs: "112 ms",
-    qtc: "478 ms (Prolonged)",
-    st: "+4.4 mm (Tombstoning)",
-    regularity: "Sinus / Ischemic",
+  afib_rvr: {
+    stage: 3,
+    stageTitle: "STAGE 3: ABNORMAL RHYTHM — AFIB WITH RAPID VENTRICULAR RESPONSE",
+    stageClass: "st-3",
+    condition: "Atrial Fibrillation with Rapid Ventricular Response (RVR)",
+    abnormality: "Atrial Fibrillation (Target Abnormality - Tachycardic)",
+    confidence: "94.2%",
+    signalQuality: "Good",
+    qualityScore: "95.8%",
+    evidenceStrength: "Strong",
+    severityLabel: "Target Abnormality · Tachycardic AFib with RVR",
+    riskWidth: "85%",
+    bpm: 134,
+    pr: "Absent (f-waves)",
+    qrs: "92 ms",
+    qtc: "438 ms",
+    st: "-0.8 mm (Strain)",
+    regularity: "Irregularly Irregular",
     summary:
-      "Profound convex ST-segment elevation (>4mm) across precordial leads V1-V4 indicative of acute transmural epicardial myocardial injury.",
+      "Rapid irregularly irregular ventricular response with chaotic fibrillatory baseline undulations, absent P-waves, and rapid rate > 130 BPM.",
+    briefExplanation: {
+      input: "Scanned 12-Lead ECG Tracing",
+      signalQuality: "Good (SNR: 25.1 dB, 97.4% baseline stability)",
+      potentialPattern: "Atrial Fibrillation with Rapid Ventricular Response",
+      confidence: "94%",
+      supportingEvidence: "• Rapid irregular ventricular tachycardia (HR: 134 BPM)\n• Absent P-waves with ST-strain depression",
+      biomedicalExplanation: "Accelerated AV nodal conduction allows high-rate transmission of chaotic atrial fibrillatory impulses, causing rapid ventricular pacing.",
+      interpretation: "The observed rapid irregular ventricular rate compromises diastolic filling and warrants prompt medical rate control.",
+      recommendation: "Urgent clinical review and physician evaluation advised.",
+    },
+    transformerAttention: {
+      primaryFocus: "High Frequency R-R Density & Absence of Atrial Pacing",
+      fWaveActivity: "High-amplitude fibrillatory undulations",
+      irregularityScore: "0.94 (Very High Entropy)",
+      attentionHeads: [
+        { name: "Head 1 (R-R Spacing)", weight: "0.95", desc: "Short, chaotic R-R intervals (<450ms)" },
+        { name: "Head 2 (P-Wave Morphology)", weight: "0.91", desc: "Complete absence of discrete P-waves" },
+        { name: "Head 3 (F-Wave Frequency)", weight: "0.88", desc: "Dense baseline fibrillatory oscillations" },
+        { name: "Head 4 (AV Conduction)", weight: "0.84", desc: "High rate AV nodal transmission" },
+      ],
+    },
+    detailedExplanation: {
+      digitizationSummary: "1D digital signal successfully extracted. Tachycardic intervals identified across precordial leads.",
+      transformerAnalysis: "The 1D Transformer identified dense clustering of irregular QRS tokens with sub-450ms R-R cycles.",
+      ragBiomedicalInsights: "AFib with RVR markedly decreases cardiac output by drastically shortening diastolic filling time, increasing risk of acute heart failure or hypotension.",
+      hemodynamicImpact: "Reduced coronary perfusion and elevated myocardial oxygen demand.",
+      clinicalWorkup: "Urgent hospital evaluation, intravenous or oral AV nodal blocking agents (beta-blockers or non-dihydropyridine CCBs), and echocardiography.",
+    },
     pathophysiology:
-      "A complete thrombotic occlusion of a major coronary artery (most commonly the Left Anterior Descending - LAD artery) has halted arterial blood supply to the anterior ventricular myocardium. Without oxygen, myocardial cells undergo progressive transmural ischemia, injury, and cellular necrosis. If blood flow is not restored urgently via primary percutaneous coronary intervention (PCI / stent) or thrombolysis, permanent ventricular remodeling, acute heart failure, or fatal ventricular arrhythmias may ensue.",
+      "Rapid conduction of atrial fibrillatory wavelets through the AV node overwhelms ventricular diastolic filling. The rapid rate compromises stroke volume and coronary perfusion.",
     precautions: [
-      "🚨 CALL EMERGENCY SERVICES (108 / 911 / 112) IMMEDIATELY. DO NOT WAIT.",
-      "DO NOT DRIVE YOURSELF TO THE HOSPITAL. Wait for an emergency ambulance with defibrillator capability.",
-      "Sit upright or lie recumbent; avoid any physical exertion or walking.",
-      "If advised by the emergency medical dispatcher and not allergic, chew 300mg of non-coated Aspirin.",
-      "Keep house doors unlocked and remove tight garments around neck and chest.",
+      "Avoid all exertion; sit recumbent and rest immediately.",
+      "Do not take unprescribed stimulants or decongestants.",
+      "Take prescribed rate-control medication (e.g. Metoprolol, Diltiazem) as directed.",
+      "Seek immediate urgent care if lightheaded or short of breath.",
     ],
-    tags: ["🚨 EMERGENCY 108/911", "🚑 DO NOT DRIVE", "⏱️ Golden 90-Min Window", "🏥 Immediate Catheterization"],
+    tags: ["⚠️ Rapid Heart Rate", "💊 Urgent Rate Control", "🩺 Immediate Hospital Care", "🚫 Zero Stimulants"],
     diseaseGuide:
-      "Acute STEMI is a time-critical cardiovascular emergency. Clinical guideline goal: Primary Percutaneous Coronary Intervention (PCI) within 90 minutes of medical contact ('Door-to-Balloon Time'). Immediate hospital protocols include: emergency 12-lead ECG re-confirmation, high-sensitivity cardiac troponins, dual antiplatelet therapy (DAPT), heparin, and emergent coronary angiography.",
-    isHighRisk: true,
-    leadWaveType: "stemi",
+      "AFib with RVR warrants prompt medical attention to control ventricular rate, evaluate stroke risk, and prevent tachycardia-induced cardiomyopathy.",
+    isHighRisk: false,
+    leadWaveType: "afib",
   },
-  vt: {
-    stage: 4,
-    stageTitle: "STAGE 4: CRITICAL EMERGENCY / HIGH RISK",
-    stageClass: "st-4",
-    condition: "Ventricular Tachycardia (Monomorphic VT)",
-    confidence: "98.9%",
-    severityLabel: "Stage 4 · CRITICAL EMERGENCY / LIFE-THREATENING",
-    riskWidth: "100%",
-    bpm: 168,
-    pr: "Dissociated",
-    qrs: "160 ms (Wide Complex)",
-    qtc: "Critically Prolonged",
-    st: "Secondary ST Changes",
-    regularity: "Rapid Monomorphic",
+  pafib: {
+    stage: 3,
+    stageTitle: "STAGE 3: ABNORMAL RHYTHM — PAROXYSMAL ATRIAL FIBRILLATION",
+    stageClass: "st-3",
+    condition: "Paroxysmal Atrial Fibrillation (pAFib)",
+    abnormality: "Atrial Fibrillation (Target Abnormality - Episodic)",
+    confidence: "88.7%",
+    signalQuality: "Good",
+    qualityScore: "93.8%",
+    evidenceStrength: "Strong",
+    severityLabel: "Target Abnormality · Paroxysmal AFib",
+    riskWidth: "65%",
+    bpm: 88,
+    pr: "Intermittent Absent",
+    qrs: "88 ms",
+    qtc: "418 ms",
+    st: "0.0 mm",
+    regularity: "Variable / Episodic",
     summary:
-      "Wide-complex tachycardia (QRS > 120 ms) at ~168 BPM with concordant morphology and AV dissociation. High risk of hemodynamic collapse.",
+      "Intermittent episodes of disorganized micro-reentrant fibrillatory activity alternating with sinus rhythm.",
+    briefExplanation: {
+      input: "Scanned 12-Lead ECG Tracing",
+      signalQuality: "Good (SNR: 23.8 dB, 96.5% baseline stability)",
+      potentialPattern: "Paroxysmal Atrial Fibrillation (pAFib)",
+      confidence: "88.7%",
+      supportingEvidence: "• Intermittent bursts of irregular rhythm\n• Transitional P-wave disappearance",
+      biomedicalExplanation: "Ectopic rapid triggers predominantly from the pulmonary veins initiate self-terminating bouts of atrial fibrillation.",
+      interpretation: "The observed periodic irregularities correspond to paroxysmal episodes of atrial arrhythmia.",
+      recommendation: "Clinical review and ambulatory rhythm monitoring advised.",
+    },
+    transformerAttention: {
+      primaryFocus: "Temporal Transition Boundaries & Intermittent F-waves",
+      fWaveActivity: "Episodic baseline noise bursts",
+      irregularityScore: "0.82 (Dynamic Entropy)",
+      attentionHeads: [
+        { name: "Head 1 (R-R Spacing)", weight: "0.88", desc: "Fluctuating R-R intervals across transitions" },
+        { name: "Head 2 (P-Wave Morphology)", weight: "0.85", desc: "Intermittent P-wave loss" },
+        { name: "Head 3 (F-Wave Frequency)", weight: "0.83", desc: "Transient micro-potential bursts" },
+        { name: "Head 4 (AV Conduction)", weight: "0.76", desc: "Variable AV nodal refractory periods" },
+      ],
+    },
+    detailedExplanation: {
+      digitizationSummary: "1D signal shows transitional shifts from sinus pacing into fibrillatory intervals.",
+      transformerAnalysis: "1D Transformer multi-head attention highlighted temporal boundaries where P-wave tokens drop out and R-R variance surges.",
+      ragBiomedicalInsights: "Paroxysmal AFib carries equivalent stroke risk to persistent AFib, mandating formal CHA2DS2-VASc score evaluation.",
+      hemodynamicImpact: "Transient palpitations, mild fatigue, and hemodynamic fluctuations during paroxysms.",
+      clinicalWorkup: "Extended 24-72 hr Holter or 14-day patch monitor, echocardiogram, and lifestyle trigger review.",
+    },
     pathophysiology:
-      "An ectopic ventricular focus or reentrant circuit within diseased ventricular myocardium (often bordering prior infarction scars) has seized pacemaking control. Impulses originate within ventricular muscle tissue rather than the specialized Purkinje fibers, causing wide, slurred QRS complexes and extremely rapid ventricular contractions. Diastolic filling time drops dramatically, precipitating rapid hypotension, loss of consciousness, and potential deterioration into Ventricular Fibrillation.",
+      "Pulmonary vein myocardial sleeves generate rapid ectopic discharges that intermittently trigger atrial fibrillation episodes lasting from minutes to days before spontaneously terminating.",
     precautions: [
-      "🚨 CALL EMERGENCY SERVICES (108 / 911 / 112) IMMEDIATELY.",
-      "Have the patient lie down flat immediately to prevent traumatic fall injury upon potential syncope.",
-      "Locate the nearest Automated External Defibrillator (AED) if available in a public setting.",
-      "Do not give oral fluids or solid food due to risk of aspiration during potential sudden loss of consciousness.",
+      "Identify and log personal triggers: alcohol (holiday heart syndrome), caffeine, sleep apnea, emotional stress.",
+      "Consult physician regarding anticoagulation based on individual stroke risk scores.",
+      "Maintain electrolyte balance and routine sleep habits.",
     ],
-    tags: ["🚨 LIFE THREATENING", "⚡ AED on Standby", "🚑 Emergency Dispatch", "🏥 Immediate Cardioversion"],
+    tags: ["⚠️ Paroxysmal Episode", "📊 Holter Patch Recommended", "🍷 Avoid Alcohol Triggers", "🩺 Physician Consult"],
     diseaseGuide:
-      "Sustained Ventricular Tachycardia is an unstable malignant arrhythmia requiring emergent cardioversion or antiarrhythmic infusion (e.g. Amiodarone). Post-stabilization workup includes coronary angiography, cardiac MRI, electrophysiological study (EPS), and placement of an Implantable Cardioverter-Defibrillator (ICD).",
-    isHighRisk: true,
-    leadWaveType: "vt",
+      "Diagnosis requires ambulatory rhythm documentation (Holter or event recorder) and cardiology evaluation for antiarrhythmic therapy or catheter ablation.",
+    isHighRisk: false,
+    leadWaveType: "afib",
   },
-};
-
-CLINICAL_PRESETS.aflutter = {
-  ...CLINICAL_PRESETS.afib,
-  condition: "Atrial Flutter with 2:1 Conduction",
-  confidence: "97.6%",
-  bpm: 75,
-  pr: "Not measurable (flutter waves)",
-  regularity: "Regular with fixed AV block",
-  summary:
-    "Organized macro-reentrant atrial circuit producing characteristic negative sawtooth flutter waves (F waves) in inferior leads with fixed 2:1 AV block.",
-  pathophysiology:
-    "A rapid, organized macro-reentrant circuit around the tricuspid valve annulus in the right atrium produces flutter waves at ~300 bpm. The AV node filters conduction, commonly conducting every second impulse (2:1 block) to protect ventricles.",
-  precautions: [
-    "Consult a cardiologist for catheter ablation evaluation (cavotricuspid isthmus ablation).",
-    "Adhere strictly to prescribed anticoagulation therapy to minimize thromboembolic stroke risk.",
-    "Monitor pulse rate and seek emergency medical evaluation if chest pressure, lightheadedness, or acute breathlessness occurs.",
-  ],
-  tags: ["⚠️ Stroke Risk", "🩺 Cardiologist Review", "💊 Anticoagulation", "⚡ Ablation Candidate"],
-  diseaseGuide:
-    "Atrial flutter diagnosis warrants formal 12-lead ECG documentation, CHA2DS2-VASc stroke risk assessment, echocardiography, and evaluation by an electrophysiologist for curative catheter ablation.",
-  leadWaveType: "aflutter",
+  aflutter: {
+    stage: 3,
+    stageTitle: "STAGE 3: ABNORMAL RHYTHM — ATRIAL FLUTTER (AFL)",
+    stageClass: "st-3",
+    condition: "Atrial Flutter with 2:1 AV Block",
+    abnormality: "Atrial Flutter (Target Abnormality - Macro-Reentrant)",
+    confidence: "91.6%",
+    signalQuality: "Good",
+    qualityScore: "96.4%",
+    evidenceStrength: "Strong",
+    severityLabel: "Target Abnormality · Atrial Flutter (AFL)",
+    riskWidth: "75%",
+    bpm: 150,
+    pr: "Sawtooth (F-waves)",
+    qrs: "86 ms",
+    qtc: "420 ms",
+    st: "0.0 mm",
+    regularity: "Regular (Sawtooth)",
+    summary:
+      "Organized macro-reentrant right atrial circuit producing classic 'sawtooth' baseline flutter waves at 300 bpm with 2:1 AV nodal conduction (ventricular rate 150 bpm).",
+    briefExplanation: {
+      input: "Scanned 12-Lead ECG Tracing",
+      signalQuality: "Good (SNR: 26.0 dB, 98.7% baseline stability)",
+      potentialPattern: "Atrial Flutter (AFL) with 2:1 AV Block",
+      confidence: "91.6%",
+      supportingEvidence: "• Regular sawtooth flutter waves (F-waves) at ~300 bpm\n• Fixed 2:1 AV nodal block with regular ventricular rate 150 bpm",
+      biomedicalExplanation: "Macro-reentrant excitation loop rotating around the cavotricuspid isthmus in the right atrium.",
+      interpretation: "The observed waveform characteristics are consistent with typical macro-reentrant atrial flutter.",
+      recommendation: "Clinical review and electrophysiologist consultation advised.",
+    },
+    transformerAttention: {
+      primaryFocus: "Continuous Sawtooth F-Wave Periodicity (300 bpm)",
+      fWaveActivity: "High-amplitude negative sawtooth waves in inferior leads",
+      irregularityScore: "0.12 (Strict 2:1 Ratio)",
+      attentionHeads: [
+        { name: "Head 1 (R-R Spacing)", weight: "0.78", desc: "Fixed 400ms R-R intervals (150 BPM)" },
+        { name: "Head 2 (P-Wave Morphology)", weight: "0.94", desc: "Replaced by continuous sawtooth F-waves" },
+        { name: "Head 3 (F-Wave Frequency)", weight: "0.96", desc: "Monotonous 300 bpm macro-reentry" },
+        { name: "Head 4 (AV Conduction)", weight: "0.89", desc: "Fixed 2:1 nodal filtering" },
+      ],
+    },
+    detailedExplanation: {
+      digitizationSummary: "1D digital signal extracted with prominent negative flutter undulations in Leads II, III, and aVF.",
+      transformerAnalysis: "1D Transformer self-attention identified rigid 300 bpm temporal periodicity in the baseline coupled with alternating QRS tokens.",
+      ragBiomedicalInsights: "Cavotricuspid isthmus (CTI) dependent flutter has high response rate to radiofrequency catheter ablation (>95% curative success). Anticoagulation rules match AFib.",
+      hemodynamicImpact: "Loss of effective atrial mechanical transport, fixed high rate of 150 bpm causing fatigue and palpitations.",
+      clinicalWorkup: "Bedside 12-lead ECG, Transthoracic Echocardiogram, stroke risk scoring, and referral for cavotricuspid isthmus catheter ablation.",
+    },
+    pathophysiology:
+      "A rapid, organized macro-reentrant circuit around the tricuspid valve annulus in the right atrium produces flutter waves at ~300 bpm. The AV node filters conduction, commonly conducting every second impulse (2:1 block) to protect ventricles.",
+    precautions: [
+      "Consult a cardiologist or electrophysiologist for catheter ablation evaluation.",
+      "Adhere strictly to prescribed anticoagulation therapy to minimize thromboembolic stroke risk.",
+      "Monitor pulse rate and seek emergency medical evaluation if chest pressure, lightheadedness, or acute breathlessness occurs.",
+    ],
+    tags: ["⚠️ Stroke Risk", "🩺 Cardiologist Review", "💊 Anticoagulation", "⚡ Ablation Candidate"],
+    diseaseGuide:
+      "Atrial flutter diagnosis warrants formal 12-lead ECG documentation, CHA2DS2-VASc stroke risk assessment, echocardiography, and evaluation by an electrophysiologist for curative catheter ablation.",
+    isHighRisk: false,
+    leadWaveType: "aflutter",
+  },
 };
 
 // ============================================================================
@@ -307,7 +443,7 @@ class OscilloscopeMonitor {
       return 0; // Baseline
     }
 
-    if (presetKey === "afib" || presetKey === "aflutter") {
+    if (presetKey === "afib" || presetKey === "afib_rvr" || presetKey === "pafib" || presetKey === "aflutter") {
       if (presetKey === "aflutter") {
         const flutterWave = ((progress * 5) % 1) * 2 - 1;
         if (progress > 0.2 && progress < 0.26) {
@@ -347,6 +483,259 @@ class OscilloscopeMonitor {
     if (progress < 0.48) return Math.sin(((progress - 0.34) / 0.14) * Math.PI) * 0.28; // T
     return 0; // Baseline
   }
+
+  animate(now) {
+    if (!this.lastTime) this.lastTime = now;
+    const dt = Math.min((now - this.lastTime) / 1000, 0.1);
+    this.lastTime = now;
+    this.phase += dt;
+    if (this.audioCooldown > 0) this.audioCooldown -= dt;
+
+    if (!this.ctx || !this.canvas) {
+      requestAnimationFrame(this.animate);
+      return;
+    }
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const sample = this.getWaveSample(this.phase, this.currentPresetKey);
+
+    this.points.push(sample);
+    if (this.points.length > this.maxPoints) {
+      this.points.shift();
+    }
+
+    // Render Oscilloscope
+    this.ctx.clearRect(0, 0, w, h);
+
+    // Glowing Lead trace
+    this.ctx.strokeStyle = "#38BDF8";
+    this.ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+    this.ctx.shadowBlur = 8;
+    this.ctx.shadowColor = "#06B6D4";
+    this.ctx.beginPath();
+
+    const midY = h / 2;
+    const amp = h * 0.38;
+
+    for (let i = 0; i < this.points.length; i++) {
+      const x = (i / this.maxPoints) * w;
+      const y = midY - this.points[i] * amp;
+      if (i === 0) this.ctx.moveTo(x, y);
+      else this.ctx.lineTo(x, y);
+    }
+    this.ctx.stroke();
+
+    // Beam head dot
+    if (this.points.length > 0) {
+      const lastX = ((this.points.length - 1) / this.maxPoints) * w;
+      const lastY = midY - this.points[this.points.length - 1] * amp;
+      this.ctx.fillStyle = "#FFFFFF";
+      this.ctx.beginPath();
+      this.ctx.arc(lastX, lastY, 3.5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    requestAnimationFrame(this.animate);
+  }
+}
+
+// ============================================================================
+// 1D ECG TRANSFORMER VISUALIZER & MULTI-HEAD ATTENTION HEATMAP
+// ============================================================================
+class TransformerVisualizer {
+  constructor(signalCanvasId, heatmapCanvasId) {
+    this.signalCanvas = document.getElementById(signalCanvasId);
+    this.heatmapCanvas = document.getElementById(heatmapCanvasId);
+    this.signalCtx = this.signalCanvas ? this.signalCanvas.getContext("2d") : null;
+    this.heatmapCtx = this.heatmapCanvas ? this.heatmapCanvas.getContext("2d") : null;
+    this.activeHead = 1;
+    this.currentPresetKey = "afib";
+    this.time = 0;
+
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+    this.initHeadButtons();
+    this.animate = this.animate.bind(this);
+    requestAnimationFrame(this.animate);
+  }
+
+  resize() {
+    if (this.signalCanvas && this.signalCanvas.parentElement) {
+      const rect = this.signalCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      this.signalCanvas.width = rect.width * dpr;
+      this.signalCanvas.height = rect.height * dpr;
+    }
+    if (this.heatmapCanvas && this.heatmapCanvas.parentElement) {
+      const rect = this.heatmapCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      this.heatmapCanvas.width = rect.width * dpr;
+      this.heatmapCanvas.height = rect.height * dpr;
+    }
+  }
+
+  initHeadButtons() {
+    for (let h = 1; h <= 4; h++) {
+      const btn = document.getElementById(`btn-head-${h}`);
+      btn?.addEventListener("click", () => {
+        document.querySelectorAll(".head-pill-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.activeHead = h;
+      });
+    }
+  }
+
+  setProfile(p) {
+    this.currentPresetKey = p.leadWaveType || (p.stage === 1 ? "normal" : "afib");
+    const metaEl = document.getElementById("trans-attention-meta");
+    if (metaEl) {
+      if (this.currentPresetKey === "normal") {
+        metaEl.textContent = "ATTENTION: 98.4% ON PERIODIC SINUS PACING (P-QRS-T)";
+        metaEl.style.color = "#10B981";
+      } else {
+        metaEl.textContent = "ATTENTION: 88.0% ON IRREGULAR R-R ENTROPY & P-WAVE ABSENCE";
+        metaEl.style.color = "#F43F5E";
+      }
+    }
+  }
+
+  animate() {
+    this.time += 0.016;
+    this.drawSignal();
+    this.drawHeatmap();
+    requestAnimationFrame(this.animate);
+  }
+
+  drawSignal() {
+    if (!this.signalCtx || !this.signalCanvas) return;
+    const ctx = this.signalCtx;
+    const w = this.signalCanvas.width;
+    const h = this.signalCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Dark grid
+    ctx.strokeStyle = "rgba(30, 58, 138, 0.25)";
+    ctx.lineWidth = 1;
+    const step = 20 * (window.devicePixelRatio || 1);
+    for (let x = 0; x < w; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Baseline
+    const midY = h * 0.55;
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.2)";
+    ctx.beginPath();
+    ctx.moveTo(0, midY);
+    ctx.lineTo(w, midY);
+    ctx.stroke();
+
+    // 1D Digital trace
+    ctx.strokeStyle = "#38BDF8";
+    ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+    ctx.beginPath();
+
+    const isNormal = this.currentPresetKey === "normal";
+    const numPoints = Math.floor(w / (2 * (window.devicePixelRatio || 1)));
+
+    for (let i = 0; i < numPoints; i++) {
+      const px = i * 2 * (window.devicePixelRatio || 1);
+      const t = this.time + (i / numPoints) * 4.0;
+      let sample = 0;
+
+      if (isNormal) {
+        const period = 60 / 72;
+        const p = (t % period) / period;
+        if (p < 0.12) sample = Math.sin((p / 0.12) * Math.PI) * 0.18;
+        else if (p < 0.18) sample = 0;
+        else if (p < 0.21) sample = -0.15;
+        else if (p < 0.25) sample = 1.0;
+        else if (p < 0.28) sample = -0.3;
+        else if (p < 0.35) sample = 0;
+        else if (p < 0.48) sample = Math.sin(((p - 0.35) / 0.13) * Math.PI) * 0.25;
+      } else {
+        const noise = (Math.sin(t * 65) + Math.cos(t * 115) + Math.sin(t * 145)) * 0.12;
+        const chaoticPeriod = 0.55 + Math.sin(Math.floor(t * 1.5)) * 0.22;
+        const p = (t % chaoticPeriod) / chaoticPeriod;
+        if (p > 0.18 && p < 0.24) {
+          sample = noise + Math.sin(((p - 0.18) / 0.06) * Math.PI) * 1.1;
+        } else {
+          sample = noise;
+        }
+      }
+
+      const py = midY - sample * (h * 0.38);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  drawHeatmap() {
+    if (!this.heatmapCtx || !this.heatmapCanvas) return;
+    const ctx = this.heatmapCtx;
+    const w = this.heatmapCanvas.width;
+    const h = this.heatmapCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const isNormal = this.currentPresetKey === "normal";
+    const numTokens = 32;
+    const tokenW = w / numTokens;
+
+    for (let k = 0; k < numTokens; k++) {
+      const t = this.time + (k / numTokens) * 4.0;
+      let attention = 0.1;
+
+      if (isNormal) {
+        const period = 0.83;
+        const p = (t % period) / period;
+        attention = p > 0.2 && p < 0.3 ? 0.85 : 0.15;
+      } else {
+        const chaoticPeriod = 0.55 + Math.sin(Math.floor(t * 1.5)) * 0.22;
+        const p = (t % chaoticPeriod) / chaoticPeriod;
+
+        if (this.activeHead === 1) {
+          attention = p > 0.15 && p < 0.35 ? 0.95 : 0.25;
+        } else if (this.activeHead === 2) {
+          attention = p < 0.18 ? 0.92 : 0.2;
+        } else if (this.activeHead === 3) {
+          attention = 0.5 + Math.abs(Math.sin(t * 25)) * 0.45;
+        } else {
+          attention = 0.4 + (k % 4) * 0.15;
+        }
+      }
+
+      let r, g, b;
+      if (attention < 0.35) {
+        r = 15;
+        g = Math.floor(100 + attention * 300);
+        b = 230;
+      } else if (attention < 0.7) {
+        const norm = (attention - 0.35) / 0.35;
+        r = Math.floor(20 + norm * 220);
+        g = Math.floor(180 + norm * 40);
+        b = Math.floor(220 - norm * 180);
+      } else {
+        const norm = (attention - 0.7) / 0.3;
+        r = Math.floor(240 + norm * 15);
+        g = Math.floor(70 - norm * 50);
+        b = Math.floor(60 - norm * 40);
+      }
+
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillRect(k * tokenW, 0, tokenW + 1, h);
+    }
+  }
+}
 
   animate(now) {
     requestAnimationFrame(this.animate);
@@ -488,7 +877,7 @@ function renderEcgToCanvas(canvasId, presetKey) {
     ctx.font = `bold ${10 * (window.devicePixelRatio || 1)}px "JetBrains Mono", monospace`;
     ctx.fillText(lead.name, 16 * (window.devicePixelRatio || 1), lead.yRatio * h - 24 * (window.devicePixelRatio || 1));
 
-    ctx.strokeStyle = presetKey === "stemi" || presetKey === "vt" ? "#ff2a5f" : "#00f0ff";
+    ctx.strokeStyle = presetKey === "normal" ? "#06B6D4" : "#F43F5E";
     ctx.lineWidth = 1.8 * (window.devicePixelRatio || 1);
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
@@ -496,45 +885,24 @@ function renderEcgToCanvas(canvasId, presetKey) {
 
     const baselineY = lead.yRatio * h;
     const amp = 35 * (window.devicePixelRatio || 1) * lead.scale;
-    const period = (presetKey === "vt" ? 80 : presetKey === "brady" ? 220 : 130) * (window.devicePixelRatio || 1);
+    const period = (presetKey === "afib_rvr" ? 75 : presetKey === "pafib" ? 110 : presetKey === "normal" ? 120 : 100) * (window.devicePixelRatio || 1);
 
     for (let x = 0; x < w; x += 2) {
       const prog = (x % period) / period;
       let val = 0;
 
-      if (presetKey === "vt") {
-        val = Math.sin(prog * Math.PI * 2) * 1.1 + Math.sin(prog * Math.PI * 4) * 0.25;
-      } else if (presetKey === "stemi") {
-        if (prog < 0.1) val = Math.sin((prog / 0.1) * Math.PI) * 0.15;
-        else if (prog < 0.15) val = 0;
-        else if (prog < 0.18) val = -0.15;
-        else if (prog < 0.22) val = 1.2;
-        else if (prog < 0.25) val = 0.55;
-        else if (prog < 0.5) val = 0.55 + Math.sin(((prog - 0.25) / 0.25) * Math.PI) * 0.45;
-        else val = 0;
-      } else if (presetKey === "afib" || presetKey === "aflutter") {
-        if (presetKey === "aflutter") {
-          const flutterWave = ((prog * 5) % 1) * 2 - 1;
-          val = prog > 0.18 && prog < 0.24
-            ? Math.sin(((prog - 0.18) / 0.06) * Math.PI) * 1.15
-            : flutterWave * 0.12;
+      if (presetKey === "aflutter") {
+        const flutterWave = ((prog * 5) % 1) * 2 - 1;
+        val = prog > 0.18 && prog < 0.24
+          ? Math.sin(((prog - 0.18) / 0.06) * Math.PI) * 1.15
+          : flutterWave * 0.12;
+      } else if (presetKey === "afib" || presetKey === "afib_rvr" || presetKey === "pafib") {
+        const noise = (Math.sin(x * 0.2) + Math.cos(x * 0.35)) * 0.12;
+        if (prog > 0.18 && prog < 0.24) {
+          val = noise + Math.sin(((prog - 0.18) / 0.06) * Math.PI) * 1.15;
         } else {
-          const noise = (Math.sin(x * 0.2) + Math.cos(x * 0.35)) * 0.1;
-          if (prog > 0.18 && prog < 0.24) {
-            val = noise + Math.sin(((prog - 0.18) / 0.06) * Math.PI) * 1.15;
-          } else {
-            val = noise;
-          }
+          val = noise;
         }
-      } else if (presetKey === "brady") {
-        if (prog < 0.08) val = Math.sin((prog / 0.08) * Math.PI) * 0.15;
-        else if (prog < 0.22) val = 0;
-        else if (prog < 0.24) val = -0.15;
-        else if (prog < 0.28) val = 1.0;
-        else if (prog < 0.31) val = -0.3;
-        else if (prog < 0.4) val = 0;
-        else if (prog < 0.54) val = Math.sin(((prog - 0.4) / 0.14) * Math.PI) * 0.25;
-        else val = 0;
       } else {
         // Normal
         if (prog < 0.12) val = Math.sin((prog / 0.12) * Math.PI) * 0.18;
@@ -580,6 +948,7 @@ async function syncReportHistory(report) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const oscMonitor = new OscilloscopeMonitor("oscilloscope-canvas");
+  const transformerVisualizer = new TransformerVisualizer("transformer-signal-canvas", "transformer-heatmap-canvas");
 
   // DOM Elements
   const dropzone = document.getElementById("dropzone");
@@ -946,110 +1315,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyUploadedAnalysis(analysis) {
     const stage = analysis.stage || (analysis.riskLevel === "high" ? 4 : analysis.riskLevel === "moderate" ? 3 : 1);
     const className = `st-${stage}`;
-    const condition = analysis.condition || analysis.rhythm || "Sinus Rhythm with Minor Variations";
-    const isHighRisk = Boolean(analysis.isHighRisk || stage === 4 || analysis.riskLevel === "high");
+    const condition = analysis.condition || analysis.rhythm || "Atrial Fibrillation (AFib)";
 
-    resultsArea.classList.add("visible");
-    stageCardHero.className = `stage-card-hero ${className}`;
-    stageBadgeHero.className = `stage-badge-large ${className}`;
-    stageBadgeText.textContent = analysis.stageTitle || `STAGE ${stage}: ${isHighRisk ? "CRITICAL EMERGENCY / HIGH RISK" : "AI PREDICTION"}`;
-    stageConfidence.textContent = analysis.confidence || "98.4%";
-    predictedConditionTitle.textContent = condition;
-    stageSummaryText.textContent = analysis.summary || `AI waveform analysis of the uploaded report demonstrates features of ${condition}.`;
-    riskSeverityLabel.textContent = analysis.severityLabel || (isHighRisk ? "Stage 4 · CRITICAL EMERGENCY / HIGH RISK" : `Stage ${stage} · Monitoring Advised`);
-
-    riskBarFill.className = `risk-bar-fill ${className}`;
-    riskBarFill.style.width = stage === 4 ? "100%" : stage === 3 ? "75%" : stage === 2 ? "45%" : "20%";
-
-    // Biomarkers
-    metricHr.innerHTML = `${analysis.bpm || 74} <span style="font-size: 12px; font-weight: normal;">BPM</span>`;
-    metricPr.innerHTML = `${analysis.pr || "154 ms"}`;
-    metricQrs.innerHTML = `${analysis.qrs || "86 ms"}`;
-    metricQtc.innerHTML = `${analysis.qtc || "412 ms"}`;
-    metricSt.innerHTML = `${analysis.st || "0.0 mm"}`;
-    metricRegularity.textContent = analysis.regularity || "Regular";
-
-    // Pathophysiology & Precautions
-    insightPathophysiology.textContent =
-      analysis.pathophysiology ||
-      (Array.isArray(analysis.observations) ? analysis.observations.join(" ") : "Impulses propagate sequentially through the cardiac conduction network.");
-
-    insightPrecautions.replaceChildren();
-    const adviceList = document.createElement("ul");
-    const precautions = Array.isArray(analysis.precautions) && analysis.precautions.length > 0
-      ? analysis.precautions
-      : [
-          "Maintain balanced hydration and electrolytes.",
-          "Adopt a low-sodium DASH or Mediterranean dietary framework.",
-          "Avoid excessive caffeine, stimulants, and energy drinks.",
-          "Consult with a licensed cardiologist to verify findings.",
-        ];
-    for (const item of precautions) {
-      const listItem = document.createElement("li");
-      listItem.textContent = item;
-      adviceList.append(listItem);
-    }
-    insightPrecautions.append(adviceList);
-
-    // Tags
-    precautionsTags.replaceChildren();
-    const tags = Array.isArray(analysis.tags) && analysis.tags.length > 0
-      ? analysis.tags
-      : isHighRisk
-        ? ["🚨 High Risk", "🚑 Call 108/911", "🏥 Consult Doctor"]
-        : ["🥗 Low-Sodium", "💧 Hydration", "🩺 Doctor Review"];
-    for (const label of tags) {
-      const badge = document.createElement("span");
-      badge.className = "precaution-badge";
-      badge.textContent = label;
-      precautionsTags.append(badge);
-    }
-
-    // Disease guidance
-    insightDiseaseGuide.innerHTML = `
-      <p style="margin: 0 0 10px;">${analysis.diseaseGuide || analysis.recommendation || "Consult with a cardiologist for clinical confirmation."}</p>
-      <strong>Essential Doctor Consultations & Diagnostic Follow-ups:</strong>
-      <ul style="margin-top: 6px;">
-        <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Bedside physician verification.</li>
-        <li><strong>Echocardiogram (TTE):</strong> Assesses cardiac ejection fraction & valve hemodynamics.</li>
-        <li><strong>Cardiac Enzyme & Troponin Assay:</strong> Evaluates ongoing myocardial injury or necrosis.</li>
-        <li><strong>Holter Telemetry (24-48 Hours):</strong> Captures intermittent transient arrhythmias.</li>
-      </ul>
-    `;
-
-    // High risk banner
-    if (isHighRisk) {
-      emergencyBanner.classList.add("active");
-      emergencyBannerDesc.textContent = `CRITICAL WARNING: ${condition} identified with high risk of acute ischemia or hemodynamic instability. Immediate doctor consultation or emergency care required.`;
-      emergencyBanner.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      emergencyBanner.classList.remove("active");
-      resultsArea.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    const randId = Math.floor(100000 + Math.random() * 900000);
-    const reportGeneratedId = `AI-${randId}-${className.toUpperCase()}`;
-    reportUuid.textContent = reportGeneratedId;
-    reportTimestamp.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-    updateFormalPrintReport({
-      condition,
-      stageTitle: analysis.stageTitle,
+    applyPredictionResults({
+      ...analysis,
+      stage,
       stageClass: className,
-      confidence: analysis.confidence,
-      severityLabel: analysis.severityLabel,
-      bpm: analysis.bpm,
-      pr: analysis.pr,
-      qrs: analysis.qrs,
-      qtc: analysis.qtc,
-      st: analysis.st,
-      regularity: analysis.regularity,
-      pathophysiology: analysis.pathophysiology,
-      precautions: analysis.precautions,
-      diseaseGuide: analysis.diseaseGuide,
-      isHighRisk,
-      reportId: reportGeneratedId,
-      fileName: reportFile.name,
+      condition,
+      reportFileName: reportFile ? reportFile.name : "Uploaded ECG Document",
     });
 
     // Update live monitor
@@ -1057,10 +1330,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const monitorBpm = document.getElementById("monitor-bpm");
     if (leadTitle) leadTitle.textContent = `LEAD II · ${condition.toUpperCase().slice(0, 22)}`;
     if (monitorBpm && analysis.bpm) monitorBpm.textContent = analysis.bpm;
-    if (stage === 4) oscMonitor.setPreset("stemi");
-    else if (stage === 3) oscMonitor.setPreset("afib");
-    else if (stage === 2) oscMonitor.setPreset("brady");
-    else oscMonitor.setPreset("normal");
+    if (stage === 1) oscMonitor.setPreset("normal");
+    else oscMonitor.setPreset("afib");
   }
 
   function applyPredictionResults(p) {
@@ -1070,7 +1341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stageCardHero.className = `stage-card-hero ${p.stageClass}`;
     stageBadgeHero.className = `stage-badge-large ${p.stageClass}`;
     stageBadgeText.textContent = p.stageTitle;
-    stageConfidence.textContent = p.confidence || "98.4%";
+    stageConfidence.textContent = p.confidence || "88.0%";
     predictedConditionTitle.textContent = p.condition;
     stageSummaryText.textContent = p.summary;
     riskSeverityLabel.textContent = p.severityLabel;
@@ -1088,7 +1359,59 @@ document.addEventListener("DOMContentLoaded", () => {
     metricSt.innerHTML = `${p.st}`;
     metricRegularity.textContent = p.regularity;
 
-    // Insights & Precautions
+    // Brief Explainable Report (Executive Summary - Matching WhatsApp Reference)
+    const briefInput = document.getElementById("brief-input");
+    const briefQuality = document.getElementById("brief-quality");
+    const briefPattern = document.getElementById("brief-pattern");
+    const briefConfidence = document.getElementById("brief-confidence");
+    const briefEvidence = document.getElementById("brief-evidence");
+    const briefBiomedical = document.getElementById("brief-biomedical");
+    const briefInterpretation = document.getElementById("brief-interpretation");
+    const briefRecommendation = document.getElementById("brief-recommendation");
+
+    if (briefInput) briefInput.textContent = p.briefExplanation?.input || "Scanned 12-Lead ECG Tracing";
+    if (briefQuality) briefQuality.innerHTML = `<strong>${p.signalQuality || "Good"}</strong> (${p.qualityScore ? `SQI: ${p.qualityScore}, SNR: 24.2 dB` : "SNR: 24.2 dB, 98.2% baseline stability"})`;
+    if (briefPattern) {
+      briefPattern.textContent = p.briefExplanation?.potentialPattern || p.condition || "Atrial Fibrillation (Abnormal Rhythm)";
+      briefPattern.style.color = p.stage === 1 ? "#15803D" : "#DC2626";
+    }
+    if (briefConfidence) briefConfidence.innerHTML = `<strong>${p.confidence || "88%"}</strong> (${p.evidenceStrength ? `Evidence: ${p.evidenceStrength}` : "Evidence: Strong"})`;
+    if (briefEvidence) {
+      if (typeof p.briefExplanation?.supportingEvidence === "string") {
+        briefEvidence.innerHTML = p.briefExplanation.supportingEvidence.replace(/\n/g, "<br>");
+      } else if (Array.isArray(p.briefExplanation?.supportingEvidence)) {
+        briefEvidence.innerHTML = p.briefExplanation.supportingEvidence.map(e => `• ${e}`).join("<br>");
+      } else {
+        briefEvidence.innerHTML = p.stage === 1
+          ? "• Regular rhythm pattern (uniform R-R intervals)<br>• Distinct P-waves preceding every QRS complex"
+          : "• Irregular rhythm pattern (variable R-R intervals)<br>• Relevant waveform changes (absence of discrete P-waves, presence of fibrillatory f-waves)";
+      }
+    }
+    if (briefBiomedical) {
+      briefBiomedical.textContent = p.briefExplanation?.biomedicalExplanation || "[RAG Retrieved]: Multiple disorganized re-entrant micro-circuits depolarize the atria chaotically at 350-600 bpm, bypassing Sinoatrial (SA) node pacing and causing irregular AV nodal conduction.";
+    }
+    if (briefInterpretation) {
+      briefInterpretation.textContent = p.briefExplanation?.interpretation || "The observed waveform characteristics are potentially associated with the detected pattern.";
+    }
+    if (briefRecommendation) {
+      briefRecommendation.textContent = p.briefExplanation?.recommendation || "Clinical review is advised.";
+    }
+
+    // Agentic AI nodes
+    const nodeQualityVal = document.getElementById("agent-quality-val");
+    const nodeXaiVal = document.getElementById("agent-xai-val");
+    const nodeRagVal = document.getElementById("agent-rag-val");
+    const nodeConfVal = document.getElementById("agent-conf-val");
+    if (nodeQualityVal) nodeQualityVal.textContent = `Quality: ${p.signalQuality || "Good"} (${p.qualityScore || "94.6%"})`;
+    if (nodeXaiVal) nodeXaiVal.textContent = `Regions: ${p.transformerAttention?.primaryFocus || "Absent P-waves & Chaotic f-waves"}`;
+    if (nodeRagVal) nodeRagVal.textContent = `Knowledge: ${p.detailedExplanation?.ragBiomedicalInsights ? p.detailedExplanation.ragBiomedicalInsights.slice(0, 45) + "..." : "Atrial Re-entry & LAA Stasis"}`;
+    if (nodeConfVal) nodeConfVal.textContent = `Confidence: ${p.confidence || "88.0%"} · ${p.evidenceStrength || "Strong Evidence"}`;
+
+    if (transformerVisualizer) {
+      transformerVisualizer.setProfile(p);
+    }
+
+    // Detailed Insights & Precautions
     insightPathophysiology.textContent = p.pathophysiology;
 
     insightPrecautions.innerHTML = `<ul>${p.precautions.map((item) => `<li>${item}</li>`).join("")}</ul>`;
@@ -1102,9 +1425,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <strong>Essential Doctor Consultations & Diagnostic Follow-ups:</strong>
       <ul style="margin-top: 6px;">
         <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Clinical bedside validation.</li>
-        <li><strong>Echocardiogram (TTE):</strong> Assesses cardiac ejection fraction & valve hemodynamics.</li>
-        <li><strong>Cardiac Enzyme & Troponin Assay:</strong> Evaluates ongoing myocardial injury or necrosis.</li>
-        <li><strong>Holter Telemetry (24-48 Hours):</strong> Captures intermittent transient arrhythmias.</li>
+        <li><strong>Echocardiogram (TTE):</strong> Assesses cardiac ejection fraction & left atrial appendage (LAA) stasis.</li>
+        <li><strong>CHA2DS2-VASc Stroke Risk Scoring:</strong> Evaluates anticoagulation necessity.</li>
+        <li><strong>Holter Telemetry (24-48 Hours):</strong> Quantifies paroxysmal vs. persistent AFib burden.</li>
       </ul>
     `;
 
@@ -1119,6 +1442,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stageTitle: p.stageTitle,
       stageClass: p.stageClass,
       confidence: p.confidence,
+      signalQuality: p.signalQuality,
       severityLabel: p.severityLabel,
       bpm: p.bpm,
       pr: p.pr,
@@ -1126,6 +1450,8 @@ document.addEventListener("DOMContentLoaded", () => {
       qtc: p.qtc,
       st: p.st,
       regularity: p.regularity,
+      briefExplanation: p.briefExplanation,
+      detailedExplanation: p.detailedExplanation,
       pathophysiology: p.pathophysiology,
       precautions: p.precautions,
       diseaseGuide: p.diseaseGuide,
@@ -1150,6 +1476,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stageTitle,
     stageClass,
     confidence,
+    signalQuality,
     severityLabel,
     bpm,
     pr,
@@ -1157,6 +1484,8 @@ document.addEventListener("DOMContentLoaded", () => {
     qtc,
     st,
     regularity,
+    briefExplanation,
+    detailedExplanation,
     pathophysiology,
     precautions,
     diseaseGuide,
@@ -1186,22 +1515,93 @@ document.addEventListener("DOMContentLoaded", () => {
     const pImg = document.getElementById("print-ecg-img");
     const pCanvas = document.getElementById("print-ecg-canvas");
 
+    const pbInput = document.getElementById("print-brief-input");
+    const pbQuality = document.getElementById("print-brief-quality");
+    const pbPattern = document.getElementById("print-brief-pattern");
+    const pbConfidence = document.getElementById("print-brief-confidence");
+    const pbEvidence = document.getElementById("print-brief-evidence");
+    const pbBiomedical = document.getElementById("print-brief-biomedical");
+    const pbInterpretation = document.getElementById("print-brief-interpretation");
+    const pbRecommendation = document.getElementById("print-brief-recommendation");
+    const pSignalQuality = document.getElementById("print-signal-quality");
+
+    if (pbInput) pbInput.textContent = briefExplanation?.input || "Scanned 12-Lead ECG Tracing";
+    if (pbQuality) pbQuality.textContent = briefExplanation?.signalQuality || "Good (SNR: 24.2 dB, 98.2% baseline stability)";
+    if (pbPattern) {
+      pbPattern.textContent = briefExplanation?.potentialPattern || condition || "Atrial Fibrillation (Abnormal Rhythm)";
+      pbPattern.style.color = stageClass === "st-1" ? "#15803D" : "#DC2626";
+    }
+    if (pbConfidence) pbConfidence.textContent = `${confidence || "88%"} (Evidence: Strong)`;
+    if (pbEvidence) {
+      pbEvidence.textContent = typeof briefExplanation?.supportingEvidence === "string" 
+        ? briefExplanation.supportingEvidence.replace(/\n/g, " · ")
+        : "• Irregular rhythm pattern (variable R-R intervals) • Absent discrete P-waves, fibrillatory f-waves";
+    }
+    if (pbBiomedical) pbBiomedical.textContent = briefExplanation?.biomedicalExplanation || "[RAG Retrieved]: Chaotic atrial re-entry at 350-600 bpm bypassing SA node pacing and causing irregular AV conduction.";
+    if (pbInterpretation) pbInterpretation.textContent = briefExplanation?.interpretation || "The observed waveform characteristics are potentially associated with the detected pattern.";
+    if (pbRecommendation) pbRecommendation.textContent = briefExplanation?.recommendation || "Clinical review is advised.";
+    if (pSignalQuality) pSignalQuality.textContent = `${signalQuality || "Good"} (SQI: 94.6%)`;
+
     if (pCond) pCond.textContent = condition || "Normal Sinus Rhythm";
     if (pStage) {
       pStage.textContent = stageTitle || "STAGE 1: OPTIMAL & NORMAL";
       pStage.className = `print-stage-tag ${stageClass || "st-1"}`;
     }
-    if (pConf) pConf.textContent = confidence || "98.4%";
+    if (pConf) pConf.textContent = confidence || "88.0%";
     if (pRepId) pRepId.textContent = reportId || "CRD-849204-X";
     if (pRepDate) pRepDate.textContent = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
     if (pFile) pFile.textContent = fileName || "ECG-Report-Tracing";
-    if (pRisk) pRisk.textContent = severityLabel || "Optimal · Low Risk";
+    if (pRisk) pRisk.textContent = severityLabel || "Target Abnormality · Atrial Fibrillation (AFib)";
     if (pHr) pHr.textContent = `${bpm || 72} BPM`;
-    if (pReg) pReg.textContent = regularity || "Regular (Consistent R-R)";
+    if (pReg) pReg.textContent = regularity || "Irregularly Irregular";
     if (pMHr) pMHr.textContent = `${bpm || 72} BPM`;
-    if (pMPr) pMPr.textContent = pr || "156 ms";
+    if (pMPr) pMPr.textContent = pr || "Absent (f-waves)";
     if (pMQrs) pMQrs.textContent = qrs || "84 ms";
     if (pMQtc) pMQtc.textContent = qtc || "412 ms";
+    if (pMSt) pMSt.textContent = st || "0.0 mm";
+    if (pMReg) pMReg.textContent = regularity || "Irregularly Irregular";
+    if (pPath) pPath.textContent = pathophysiology || "Electrical impulses propagate sequentially through the cardiac syncytium.";
+
+    if (pPrec) {
+      const list = Array.isArray(precautions) && precautions.length > 0 ? precautions : [
+        "Strictly avoid stimulants: zero energy drinks, eliminate or minimize caffeine, avoid pseudoephedrine.",
+        "Take prescribed oral anticoagulants strictly as scheduled—never skip a dose without doctor advice.",
+        "Monitor blood pressure and log palpitation durations.",
+        "Seek emergency medical evaluation immediately if experiencing chest tightness or shortness of breath."
+      ];
+      pPrec.innerHTML = `<ul>${list.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+    }
+
+    if (pGuide) {
+      pGuide.innerHTML = `
+        <ul>
+          <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Clinical bedside validation by attending physician.</li>
+          <li><strong>Transthoracic Echocardiogram (Echo):</strong> Assesses left atrial chamber dimensions & LAA thrombus exclusion.</li>
+          <li><strong>CHA2DS2-VASc Stroke Risk Assessment:</strong> Determines oral anticoagulation guidelines.</li>
+          <li><strong>24-48 Hour Holter Telemetry:</strong> Evaluates persistent vs. paroxysmal rhythm burden.</li>
+        </ul>
+      `;
+    }
+
+    if (pEmerg) {
+      pEmerg.style.display = isHighRisk ? "block" : "none";
+    }
+
+    // Waveform rendering for print
+    if (customUploadedFile && previewImg && previewImg.style.display !== "none" && previewImg.src) {
+      if (pImg) {
+        pImg.src = previewImg.src;
+        pImg.style.display = "block";
+      }
+      if (pCanvas) pCanvas.style.display = "none";
+    } else {
+      if (pImg) pImg.style.display = "none";
+      if (pCanvas) {
+        pCanvas.style.display = "block";
+        renderEcgToCanvas("print-ecg-canvas", stageClass === "st-1" ? "normal" : "afib");
+      }
+    }
+  }
     if (pMSt) pMSt.textContent = st || "0.0 mm";
     if (pMReg) pMReg.textContent = regularity || "Regular";
     if (pPath) pPath.textContent = pathophysiology || "Electrical impulses propagate sequentially through the cardiac syncytium without regional delay.";

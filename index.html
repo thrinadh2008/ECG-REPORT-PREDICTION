@@ -1506,6 +1506,203 @@
     }
 
     /* ==========================================================================
+       1D ECG TRANSFORMER & AGENTIC AI VISUALIZER
+       ========================================================================== */
+    .transformer-section {
+      margin-top: 22px;
+      background: var(--surface-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 24px 26px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .transformer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .transformer-canvases-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #060B18;
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      border: 1px solid #1E3A8A;
+      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .canvas-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #94A3B8;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .signal-canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 120px;
+    }
+
+    .signal-canvas-wrap canvas,
+    .attention-heatmap-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .attention-heatmap-wrap {
+      position: relative;
+      width: 100%;
+      height: 36px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .attention-heads-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .head-pill-btn {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .head-pill-btn:hover {
+      border-color: #2563EB;
+      color: #2563EB;
+      background: #FFFFFF;
+    }
+
+    .head-pill-btn.active {
+      background: #EFF6FF;
+      border-color: #2563EB;
+      color: #2563EB;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    .agentic-pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .agent-node-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .agent-node-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .agent-node-card.active {
+      border-color: #06B6D4;
+      background: #F0FDF4;
+    }
+
+    .agent-badge-pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .agent-badge-pill.quality { background: #E0F2FE; color: #0284C7; }
+    .agent-badge-pill.xai { background: #FEE2E2; color: #DC2626; }
+    .agent-badge-pill.rag { background: #FEF3C7; color: #D97706; }
+    .agent-badge-pill.conf { background: #DCFCE7; color: #16A34A; }
+
+    /* Brief & Detailed Report Styling */
+    .brief-report-box {
+      background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
+      border: 1.5px solid #86EFAC;
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 15px -2px rgba(16, 185, 129, 0.1);
+    }
+
+    .brief-report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #BBF7D0;
+    }
+
+    .brief-report-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brief-report-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 9px;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .brief-label {
+      font-weight: 700;
+      color: var(--color-navy);
+      min-width: 175px;
+      flex-shrink: 0;
+    }
+
+    .brief-val {
+      color: var(--text-body);
+      flex: 1;
+    }
+
+    @media (max-width: 640px) {
+      .brief-report-row {
+        flex-direction: column;
+        gap: 3px;
+      }
+      .brief-label {
+        min-width: auto;
+      }
+    }
+
+    /* ==========================================================================
        FOOTER
        ========================================================================== */
     footer {
@@ -1921,11 +2118,11 @@
       <div>
         <div class="hero-tag">
           <span class="hero-tag-sparkle">✦</span>
-          <span>CardioAI Diagnostic Studio</span>
+          <span>Agentic AI • 1D ECG Transformer Studio</span>
         </div>
         <h1 class="hero-title">
-          Upload your ECG Report. <br />
-          <span class="grad-text">Predict Stage, Cause & Precautions.</span>
+          Afib / AFL Abnormality Detection. <br />
+          <span class="grad-text">1D ECG Transformer · Explainable Clinical Reports</span>
         </h1>
 
         <div class="hero-feature-badges">
@@ -1933,7 +2130,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
             </svg>
-            <span>Multi-Stage Risk Stratification</span>
+            <span>1D ECG Transformer</span>
           </div>
           <div class="feat-badge">
             <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
@@ -1941,13 +2138,13 @@
               <line x1="12" y1="9" x2="12" y2="13"></line>
               <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <span>Arrhythmia & Ischemia Detection</span>
+            <span>Target Abnormality: AFib / AFL</span>
           </div>
           <div class="feat-badge">
             <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
-            <span>Tailored Health Precautions</span>
+            <span>Brief & Detailed Report</span>
           </div>
         </div>
       </div>
@@ -1956,24 +2153,24 @@
       <div class="hero-stats-card">
         <div class="stats-card-header">
           <span class="stats-card-title">System Status</span>
-          <span class="status-pill-green">● AI Active</span>
+          <span class="status-pill-green">● 1D Transformer Active</span>
         </div>
         <div class="stats-grid-row">
           <div class="stat-metric-box">
-            <div class="stat-metric-val">Online</div>
-            <div class="stat-metric-lbl">Diagnostic Engine</div>
+            <div class="stat-metric-val">1D Transf.</div>
+            <div class="stat-metric-lbl">Model Architecture</div>
           </div>
           <div class="stat-metric-box">
-            <div class="stat-metric-val">&lt; 1.5s</div>
+            <div class="stat-metric-val">&lt; 1.2s</div>
             <div class="stat-metric-lbl">Inference Speed</div>
           </div>
         </div>
-        <div class="stats-card-title" style="margin-top: 4px;">Classification Stages:</div>
+        <div class="stats-card-title" style="margin-top: 4px;">Classification Categories:</div>
         <div class="stages-legend">
-          <div class="stage-pill st-1">Stage 1<br />Normal</div>
-          <div class="stage-pill st-2">Stage 2<br />Mild</div>
-          <div class="stage-pill st-3">Stage 3<br />Moderate</div>
-          <div class="stage-pill st-4">Stage 4<br />Critical</div>
+          <div class="stage-pill st-1">Control<br />Normal</div>
+          <div class="stage-pill st-3">Target<br />AFib</div>
+          <div class="stage-pill st-3">Rapid<br />AFib-RVR</div>
+          <div class="stage-pill st-3">Flutter<br />AFL</div>
         </div>
       </div>
     </section>
@@ -1986,43 +2183,43 @@
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 14 14"></polyline>
           </svg>
-          Clinical Rhythm Benchmarks
+          Clinical Rhythm Benchmarks (Target Abnormality: AFib / AFL)
         </span>
       </div>
       <div class="preset-chips-row">
         <button class="preset-chip-btn" data-preset="normal" type="button">
-          <div class="preset-badge-icon icon-normal">S1</div>
+          <div class="preset-badge-icon icon-normal">NSR</div>
           <div class="preset-chip-text">
             <h4>Normal Sinus Rhythm</h4>
-            <span>72 BPM · Low / Optimal Risk</span>
-          </div>
-        </button>
-        <button class="preset-chip-btn" data-preset="brady" type="button">
-          <div class="preset-badge-icon icon-brady">S2</div>
-          <div class="preset-chip-text">
-            <h4>Sinus Bradycardia</h4>
-            <span>48 BPM · Mild Conduction Delay</span>
+            <span>72 BPM · Baseline Control</span>
           </div>
         </button>
         <button class="preset-chip-btn" data-preset="afib" type="button">
-          <div class="preset-badge-icon icon-afib">S3</div>
+          <div class="preset-badge-icon icon-afib">AFIB</div>
           <div class="preset-chip-text">
-            <h4>Atrial Fibrillation</h4>
-            <span>124 BPM · Moderate / Stroke Risk</span>
+            <h4>Atrial Fibrillation (Persistent)</h4>
+            <span>118 BPM · Target Abnormality (88% Conf)</span>
           </div>
         </button>
-        <button class="preset-chip-btn" data-preset="stemi" type="button">
-          <div class="preset-badge-icon icon-stemi">S4</div>
+        <button class="preset-chip-btn" data-preset="afib_rvr" type="button">
+          <div class="preset-badge-icon icon-stemi">RVR</div>
           <div class="preset-chip-text">
-            <h4>Acute Anterior STEMI</h4>
-            <span>98 BPM · 🚨 CRITICAL HIGH RISK</span>
+            <h4>AFib with Rapid Response</h4>
+            <span>134 BPM · Tachycardic Ventricular Rate</span>
           </div>
         </button>
-        <button class="preset-chip-btn" data-preset="vt" type="button">
-          <div class="preset-badge-icon icon-vt">S4</div>
+        <button class="preset-chip-btn" data-preset="pafib" type="button">
+          <div class="preset-badge-icon icon-brady">pAF</div>
           <div class="preset-chip-text">
-            <h4>Ventricular Tachycardia</h4>
-            <span>168 BPM · 🚨 LIFE THREATENING</span>
+            <h4>Paroxysmal Atrial Fibrillation</h4>
+            <span>88 BPM · Intermittent / Episodic</span>
+          </div>
+        </button>
+        <button class="preset-chip-btn" data-preset="aflutter" type="button">
+          <div class="preset-badge-icon icon-vt">AFL</div>
+          <div class="preset-chip-text">
+            <h4>Atrial Flutter (Sawtooth AFL)</h4>
+            <span>150 BPM · 2:1 Macro-Reentrant Block</span>
           </div>
         </button>
       </div>
@@ -2178,8 +2375,156 @@
       </ul>
     </section>
 
+    <!-- 1D ECG TRANSFORMER & AGENTIC AI ENGINE SECTION -->
+    <section class="transformer-section" id="transformer-section">
+      <div class="transformer-header">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-electric); letter-spacing: 0.5px;">Deep Learning Signal Intelligence</div>
+          <h2 style="margin: 2px 0 0; font-size: 18px; color: var(--color-navy); display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            1D ECG Transformer Architecture & Attention Heatmap
+          </h2>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 11px; background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; font-weight: 700; padding: 4px 10px; border-radius: 12px;">Temporal Tokenizer (50ms)</span>
+          <span style="font-size: 11px; background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D; font-weight: 700; padding: 4px 10px; border-radius: 12px;">4 Multi-Head Attention</span>
+          <span style="font-size: 11px; background: #FEF3C7; border: 1px solid #FDE68A; color: #B45309; font-weight: 700; padding: 4px 10px; border-radius: 12px;">Target: AFib/AFL</span>
+        </div>
+      </div>
+
+      <!-- DUAL CANVAS VISUALIZER: 1D EXTRACTED SIGNAL + TRANSFORMER ATTENTION HEATMAP -->
+      <div class="transformer-canvases-wrap">
+        <div class="canvas-title-bar">
+          <span>EXTRACTED 1D DIGITAL SIGNAL (VOLTAGE / TIME @ 250 Hz)</span>
+          <span id="trans-sampling-meta">LEAD II · FILTERED · 25mm/s</span>
+        </div>
+        <div class="signal-canvas-wrap">
+          <canvas id="transformer-signal-canvas"></canvas>
+        </div>
+
+        <div class="canvas-title-bar" style="margin-top: 8px;">
+          <span>1D TRANSFORMER MULTI-HEAD SELF-ATTENTION WEIGHTS (TEMPORAL HEATMAP)</span>
+          <span id="trans-attention-meta" style="color: #38BDF8;">ATTENTION: 88.4% ON ANOMALY (R-R / P-WAVE)</span>
+        </div>
+        <div class="attention-heatmap-wrap">
+          <canvas id="transformer-heatmap-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- ATTENTION HEAD SELECTION TABS -->
+      <div class="attention-heads-nav">
+        <span style="font-size: 12px; font-weight: 700; color: var(--color-navy); margin-right: 4px;">Attention Focus:</span>
+        <button class="head-pill-btn active" id="btn-head-1" data-head="1" type="button">Head 1: R-R Interval Entropy (0.92)</button>
+        <button class="head-pill-btn" id="btn-head-2" data-head="2" type="button">Head 2: P-Wave Flatline & Absence (0.89)</button>
+        <button class="head-pill-btn" id="btn-head-3" data-head="3" type="button">Head 3: F-Wave Micro-Potentials (0.86)</button>
+        <button class="head-pill-btn" id="btn-head-4" data-head="4" type="button">Head 4: AV Nodal Latency (0.79)</button>
+      </div>
+
+      <!-- AGENTIC AI PIPELINE FLOW (Matching WhatsApp Image 1) -->
+      <div style="margin-top: 20px; font-size: 13px; font-weight: 700; color: var(--color-navy);">
+        Agentic AI Multi-Agent Core:
+      </div>
+      <div class="agentic-pipeline-grid">
+        <div class="agent-node-card active" id="node-quality">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-size: 13px; color: var(--color-navy);">Quality Agent</strong>
+            <span class="agent-badge-pill quality">Signal SQI</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-body);">Evaluates digitization clarity, baseline drift, and SNR (24.2 dB).</div>
+          <div style="font-size: 11px; font-weight: 700; color: #0284C7;" id="agent-quality-val">Quality: Good (94.6%)</div>
+        </div>
+
+        <div class="agent-node-card active" id="node-xai">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-size: 13px; color: var(--color-navy);">Explainability Agent</strong>
+            <span class="agent-badge-pill xai">XAI Attention</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-body);">Extracts 1D Transformer Attention to flag critical irregular waveform segments.</div>
+          <div style="font-size: 11px; font-weight: 700; color: #DC2626;" id="agent-xai-val">Regions: Absent P-waves & Chaotic f-waves</div>
+        </div>
+
+        <div class="agent-node-card active" id="node-rag">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-size: 13px; color: var(--color-navy);">RAG Agent</strong>
+            <span class="agent-badge-pill rag">Biomedical KB</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-body);">Retrieves grounded ESC / AHA electrophysiology guidelines and stroke risk.</div>
+          <div style="font-size: 11px; font-weight: 700; color: #D97706;" id="agent-rag-val">Knowledge: Atrial Re-entry & LAA Stasis</div>
+        </div>
+
+        <div class="agent-node-card active" id="node-conf">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-size: 13px; color: var(--color-navy);">Confidence Assessment</strong>
+            <span class="agent-badge-pill conf">Uncertainty</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-body);">Calibrates prediction probability and uncertainty boundaries.</div>
+          <div style="font-size: 11px; font-weight: 700; color: #16A34A;" id="agent-conf-val">Confidence: 88.0% · Strong Evidence</div>
+        </div>
+      </div>
+    </section>
+
     <!-- PREDICTION RESULTS AREA -->
     <section class="prediction-results-area" id="results-area">
+      <!-- BRIEF EXPLAINABLE ECG REPORT (EXECUTIVE SUMMARY - Matching WhatsApp Reference) -->
+      <div class="brief-report-box" id="brief-report-container">
+        <div class="brief-report-header">
+          <div class="brief-report-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Final Explainable ECG Report (Brief Clinical Summary)</span>
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: #16A34A; background: #DCFCE7; padding: 3px 10px; border-radius: 12px;">Executive Triage</span>
+        </div>
+
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Input :</div>
+          <div class="brief-val" id="brief-input">Scanned 12-Lead ECG Tracing</div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Signal Quality :</div>
+          <div class="brief-val" id="brief-quality"><strong>Good</strong> (SNR: 24.2 dB, 98.2% isoelectric baseline stability)</div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Potential Pattern :</div>
+          <div class="brief-val" id="brief-pattern" style="color: #DC2626; font-weight: 700;">Atrial Fibrillation (Abnormal Rhythm)</div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Confidence :</div>
+          <div class="brief-val" id="brief-confidence"><strong>88%</strong> (Evidence: Strong)</div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Supporting Evidence :</div>
+          <div class="brief-val" id="brief-evidence">
+            • Irregular rhythm pattern (variable R-R intervals)<br />
+            • Relevant waveform changes (absence of discrete P-waves, presence of rapid fibrillatory f-waves)
+          </div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Biomedical Explanation :</div>
+          <div class="brief-val" id="brief-biomedical" style="color: #4338CA;">
+            [RAG Retrieved]: Multiple disorganized re-entrant electrical wavelets depolarize the atria chaotically at 350-600 bpm, bypassing Sinoatrial (SA) node pacing and causing irregular AV nodal conduction.
+          </div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Interpretation :</div>
+          <div class="brief-val" id="brief-interpretation">
+            The observed waveform characteristics are potentially associated with the detected pattern.
+          </div>
+        </div>
+        <div class="brief-report-row">
+          <div class="brief-label">➔ Recommendation :</div>
+          <div class="brief-val" id="brief-recommendation" style="font-weight: 700; color: #166534;">
+            Clinical review is advised.
+          </div>
+        </div>
+      </div>
       <!-- PRIMARY STAGE CARD -->
       <div class="stage-card-hero st-1" id="stage-card-hero">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
@@ -2428,10 +2773,33 @@
           <div class="print-stage-tag" id="print-stage">STAGE 1: OPTIMAL & NORMAL</div>
         </div>
         <div class="print-summary-meta">
-          <div><strong>Report Type:</strong> <span id="print-type">12-Lead Diagnostic & Rhythm Analysis</span></div>
-          <div><strong>Model Probability:</strong> <span id="print-confidence">98.4%</span></div>
-          <div><strong>Signal Quality:</strong> <span>Good (Continuous Digital Trace)</span></div>
-          <div><strong>Doctor Review:</strong> <span>Preliminary AI Analysis</span></div>
+          <div><strong>Architecture:</strong> <span>1D ECG Transformer + Agentic AI</span></div>
+          <div><strong>Model Probability:</strong> <span id="print-confidence">88.4%</span></div>
+          <div><strong>Signal Quality:</strong> <span id="print-signal-quality">Good (SQI: 94.6%)</span></div>
+          <div><strong>Target Abnormality:</strong> <span>Atrial Fibrillation / AFL</span></div>
+        </div>
+      </div>
+
+      <!-- BRIEF EXPLAINABLE ECG REPORT (EXECUTIVE CLINICAL TRIAGE - Matching WhatsApp Reference) -->
+      <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 8.5pt; page-break-inside: avoid;">
+        <div style="font-weight: 800; color: #166534; font-size: 9pt; margin-bottom: 5px;">Final Explainable ECG Report (Brief Clinical Summary):</div>
+        <div style="display: grid; grid-template-columns: 140px 1fr; row-gap: 3px;">
+          <div><strong>➔ Input:</strong></div>
+          <div id="print-brief-input">Scanned 12-Lead ECG Tracing</div>
+          <div><strong>➔ Signal Quality:</strong></div>
+          <div id="print-brief-quality">Good (SNR: 24.2 dB, 98.2% baseline stability)</div>
+          <div><strong>➔ Potential Pattern:</strong></div>
+          <div id="print-brief-pattern" style="font-weight: 700; color: #DC2626;">Atrial Fibrillation (Abnormal Rhythm)</div>
+          <div><strong>➔ Confidence:</strong></div>
+          <div id="print-brief-confidence"><strong>88%</strong> (Evidence: Strong)</div>
+          <div><strong>➔ Supporting Evidence:</strong></div>
+          <div id="print-brief-evidence">• Irregular rhythm pattern (variable R-R intervals) • Absent discrete P-waves, fibrillatory f-waves</div>
+          <div><strong>➔ Biomedical Expl.:</strong></div>
+          <div id="print-brief-biomedical" style="color: #4338CA;">[RAG Retrieved]: Chaotic atrial re-entry at 350-600 bpm bypassing SA node pacing, causing variable AV nodal conduction.</div>
+          <div><strong>➔ Interpretation:</strong></div>
+          <div id="print-brief-interpretation">The observed waveform characteristics are potentially associated with the detected pattern.</div>
+          <div><strong>➔ Recommendation:</strong></div>
+          <div id="print-brief-recommendation" style="font-weight: 700; color: #166534;">Clinical review is advised.</div>
         </div>
       </div>
 
@@ -2583,7 +2951,7 @@
   </div>
 
   <!-- Application Script -->
-  <script type="module" src="./app.js?v=20261105-5"></script>
+  <script type="module" src="./app.js?v=20261107-1"></script>
 </body>
 
 </html>

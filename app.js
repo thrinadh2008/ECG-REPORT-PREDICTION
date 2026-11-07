@@ -737,85 +737,6 @@ class TransformerVisualizer {
   }
 }
 
-  animate(now) {
-    requestAnimationFrame(this.animate);
-    if (!this.ctx || !this.canvas) return;
-
-    const delta = (now - this.lastTime) / 1000;
-    this.lastTime = now;
-    if (delta > 0.5) return;
-
-    this.audioCooldown = Math.max(0, this.audioCooldown - delta);
-    this.phase += delta;
-
-    const sample = this.getWaveSample(this.phase, this.currentPresetKey);
-    this.points.push(sample);
-    if (this.points.length > this.maxPoints) {
-      this.points.shift();
-    }
-
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-    const ctx = this.ctx;
-
-    ctx.clearRect(0, 0, w, h);
-
-    // Draw subtle grid
-    ctx.strokeStyle = "rgba(0, 240, 255, 0.08)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    const gridStep = 20 * (window.devicePixelRatio || 1);
-    for (let x = 0; x < w; x += gridStep) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-    }
-    for (let y = 0; y < h; y += gridStep) {
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-    }
-    ctx.stroke();
-
-    if (this.points.length < 2) return;
-
-    // Glowing Neon trace
-    ctx.strokeStyle = this.currentPresetKey === "stemi" || this.currentPresetKey === "vt"
-      ? "#ff2a5f"
-      : "#00f0ff";
-    ctx.shadowColor = ctx.strokeStyle;
-    ctx.shadowBlur = 10 * (window.devicePixelRatio || 1);
-    ctx.lineWidth = 2.2 * (window.devicePixelRatio || 1);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    ctx.beginPath();
-    const step = w / (this.maxPoints - 1);
-    const midY = h * 0.55;
-    const amplitude = h * 0.42;
-
-    for (let i = 0; i < this.points.length; i++) {
-      const px = i * step;
-      const py = midY - this.points[i] * amplitude;
-      if (i === 0) {
-        ctx.moveTo(px, py);
-      } else {
-        ctx.lineTo(px, py);
-      }
-    }
-    ctx.stroke();
-
-    // Leading glowing cursor dot
-    const lastX = (this.points.length - 1) * step;
-    const lastY = midY - this.points[this.points.length - 1] * amplitude;
-    ctx.fillStyle = "#ffffff";
-    ctx.shadowColor = "#ffffff";
-    ctx.shadowBlur = 14;
-    ctx.beginPath();
-    ctx.arc(lastX, lastY, 3.5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  }
-}
-
 // ============================================================================
 // STATIC MULTI-LEAD ECG CANVAS RENDERER
 // ============================================================================
@@ -1004,36 +925,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioToggle = document.getElementById("audio-toggle");
   const audioLabel = document.getElementById("audio-label");
 
-  // State
-  let currentPresetKey = "normal";
+  // State - Default to Special Abnormality: Atrial Fibrillation
+  let currentPresetKey = "afib";
   let currentZoom = 1;
   let customUploadedFile = null;
   let customMimeType = null;
   let currentPdfUrl = null;
   let analysisRequestId = 0;
 
-  // Initialize initial canvas preview
-  renderEcgToCanvas("ecg-canvas-render", "normal");
-  oscMonitor.setPreset("normal");
-  updateFormalPrintReport({
-    condition: CLINICAL_PRESETS.normal.condition,
-    stageTitle: CLINICAL_PRESETS.normal.stageTitle,
-    stageClass: CLINICAL_PRESETS.normal.stageClass,
-    confidence: CLINICAL_PRESETS.normal.confidence,
-    severityLabel: CLINICAL_PRESETS.normal.severityLabel,
-    bpm: CLINICAL_PRESETS.normal.bpm,
-    pr: CLINICAL_PRESETS.normal.pr,
-    qrs: CLINICAL_PRESETS.normal.qrs,
-    qtc: CLINICAL_PRESETS.normal.qtc,
-    st: CLINICAL_PRESETS.normal.st,
-    regularity: CLINICAL_PRESETS.normal.regularity,
-    pathophysiology: CLINICAL_PRESETS.normal.pathophysiology,
-    precautions: CLINICAL_PRESETS.normal.precautions,
-    diseaseGuide: CLINICAL_PRESETS.normal.diseaseGuide,
-    isHighRisk: false,
-    reportId: "CRD-849204-NORMAL",
-    fileName: "Benchmark Sample ECG",
-  });
+  // Initialize initial canvas preview to Special Abnormality
+  renderEcgToCanvas("ecg-canvas-render", "afib");
+  oscMonitor.setPreset("afib");
+  if (transformerVisualizer) {
+    transformerVisualizer.setProfile(CLINICAL_PRESETS.afib);
+  }
+  applyPredictionResults(CLINICAL_PRESETS.afib);
 
   // AUDIO TOGGLE
   audioToggle?.addEventListener("click", () => {
@@ -1105,6 +1011,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fileInput?.addEventListener("change", (e) => {
     const file = e.target?.files?.[0];
     if (file) handleUploadedFile(file);
+    if (fileInput) fileInput.value = "";
   });
 
   function handleUploadedFile(file) {
@@ -1264,15 +1171,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!payload.analysis) throw new Error("The server returned no analysis.");
       if (requestId !== analysisRequestId) return;
 
-      applyUploadedAnalysis(payload.analysis);
-      uploadStatusMsg.textContent = `${payload.cached ? "Loaded the saved result" : "Analysis complete"} for ${reportFile.name} (${payload.analysis.condition || payload.analysis.rhythm}).`;
+      applyUploadedAnalysis(payload.analysis, reportFile.name);
+      uploadStatusMsg.textContent = `${payload.cached ? "Loaded saved result" : "Analysis complete"} for ${reportFile.name} (${payload.analysis.condition || payload.analysis.rhythm}).`;
       uploadStatusMsg.style.color = "var(--neon-teal)";
       recordReportToHistory(
         {
           condition: payload.analysis.condition || payload.analysis.rhythm,
           stageTitle: payload.analysis.stageTitle,
           stageClass: payload.analysis.stageClass,
-          bpm: payload.analysis.bpm || 72,
+          bpm: payload.analysis.bpm || 118,
         },
         reportFile.name,
         payload.reportId
@@ -1312,7 +1219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }[riskLevel] || "st-2";
   }
 
-  function applyUploadedAnalysis(analysis) {
+  function applyUploadedAnalysis(analysis, uploadedFileName) {
     const stage = analysis.stage || (analysis.riskLevel === "high" ? 4 : analysis.riskLevel === "moderate" ? 3 : 1);
     const className = `st-${stage}`;
     const condition = analysis.condition || analysis.rhythm || "Atrial Fibrillation (AFib)";
@@ -1322,7 +1229,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stage,
       stageClass: className,
       condition,
-      reportFileName: reportFile ? reportFile.name : "Uploaded ECG Document",
+      reportFileName: uploadedFileName || (customUploadedFile ? customUploadedFile.name : "Uploaded ECG Document"),
     });
 
     // Update live monitor
@@ -1337,27 +1244,34 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyPredictionResults(p) {
     resultsArea.classList.add("visible");
 
-    // Update Stage Card Hero Classes
-    stageCardHero.className = `stage-card-hero ${p.stageClass}`;
-    stageBadgeHero.className = `stage-badge-large ${p.stageClass}`;
-    stageBadgeText.textContent = p.stageTitle;
+    // Update Stage Card Hero Classes with safe fallbacks
+    const stageClass = p.stageClass || `st-${p.stage || 3}`;
+    const stageTitle = p.stageTitle || (p.stage === 1 ? "STAGE 1: OPTIMAL & NORMAL SINUS RHYTHM" : "STAGE 3: ABNORMAL RHYTHM — ATRIAL FIBRILLATION");
+    const condition = p.condition || p.rhythm || "Atrial Fibrillation (AFib)";
+    const summary = p.summary || "Complete absence of discrete P-waves replaced by rapid irregular fibrillatory f-waves (350-600 bpm) and chaotic R-R intervals.";
+    const severityLabel = p.severityLabel || (p.stage === 1 ? "Stage 1 · Low Risk / Control Baseline" : "Target Abnormality · Atrial Fibrillation (AFib)");
+    const riskWidth = p.riskWidth || (p.stage === 4 ? "95%" : p.stage === 3 ? "75%" : p.stage === 2 ? "45%" : "20%");
+
+    stageCardHero.className = `stage-card-hero ${stageClass}`;
+    stageBadgeHero.className = `stage-badge-large ${stageClass}`;
+    stageBadgeText.textContent = stageTitle;
     stageConfidence.textContent = p.confidence || "88.0%";
-    predictedConditionTitle.textContent = p.condition;
-    stageSummaryText.textContent = p.summary;
-    riskSeverityLabel.textContent = p.severityLabel;
+    predictedConditionTitle.textContent = condition;
+    stageSummaryText.textContent = summary;
+    riskSeverityLabel.textContent = severityLabel;
     const disclaimerEl = document.getElementById("analysis-disclaimer");
     if (disclaimerEl) disclaimerEl.style.display = "none";
 
-    riskBarFill.className = `risk-bar-fill ${p.stageClass}`;
-    riskBarFill.style.width = p.riskWidth;
+    riskBarFill.className = `risk-bar-fill ${stageClass}`;
+    riskBarFill.style.width = riskWidth;
 
     // Metrics
-    metricHr.innerHTML = `${p.bpm} <span style="font-size: 12px; font-weight: normal;">BPM</span>`;
-    metricPr.innerHTML = `${p.pr}`;
-    metricQrs.innerHTML = `${p.qrs}`;
-    metricQtc.innerHTML = `${p.qtc}`;
-    metricSt.innerHTML = `${p.st}`;
-    metricRegularity.textContent = p.regularity;
+    metricHr.innerHTML = `${p.bpm || 118} <span style="font-size: 12px; font-weight: normal;">BPM</span>`;
+    metricPr.innerHTML = `${p.pr || "Absent (f-waves)"}`;
+    metricQrs.innerHTML = `${p.qrs || "90 ms"}`;
+    metricQtc.innerHTML = `${p.qtc || "428 ms"}`;
+    metricSt.innerHTML = `${p.st || "0.0 mm"}`;
+    metricRegularity.textContent = p.regularity || (p.stage === 1 ? "Regular" : "Irregularly Irregular");
 
     // Brief Explainable Report (Executive Summary - Matching WhatsApp Reference)
     const briefInput = document.getElementById("brief-input");
@@ -1411,17 +1325,30 @@ document.addEventListener("DOMContentLoaded", () => {
       transformerVisualizer.setProfile(p);
     }
 
-    // Detailed Insights & Precautions
-    insightPathophysiology.textContent = p.pathophysiology;
+    // Detailed Insights & Precautions with safe array handling
+    const precautionsList = Array.isArray(p.precautions) && p.precautions.length > 0
+      ? p.precautions
+      : [
+          "Strictly avoid stimulants: zero energy drinks, eliminate caffeine, avoid pseudoephedrine.",
+          "Take prescribed oral anticoagulants (DOACs) strictly as scheduled to mitigate stroke risk.",
+          "Monitor resting blood pressure and log palpitation durations.",
+          "Seek emergency evaluation if experiencing acute shortness of breath or dizziness."
+        ];
 
-    insightPrecautions.innerHTML = `<ul>${p.precautions.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+    const tagsList = Array.isArray(p.tags) && p.tags.length > 0
+      ? p.tags
+      : ["⚠️ Stroke Prevention", "🚫 Zero Stimulants", "💊 Strict Anticoagulation", "🩺 Urgent Cardiologist"];
 
-    precautionsTags.innerHTML = p.tags
+    insightPathophysiology.textContent = p.pathophysiology || "Multiple chaotic micro-reentrant electrical circuits depolarize the atria at 350-600 bpm. The atria quiver instead of contracting synchronously, causing blood stasis in the left atrial appendage and elevating thromboembolic stroke risk.";
+
+    insightPrecautions.innerHTML = `<ul>${precautionsList.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+
+    precautionsTags.innerHTML = tagsList
       .map((t) => `<span class="precaution-badge">${t}</span>`)
       .join("");
 
     insightDiseaseGuide.innerHTML = `
-      <p style="margin: 0 0 10px;">${p.diseaseGuide}</p>
+      <p style="margin: 0 0 10px;">${p.diseaseGuide || "Atrial Fibrillation requires comprehensive medical evaluation for stroke prevention (CHA2DS2-VASc risk score) and rate/rhythm control."}</p>
       <strong>Essential Doctor Consultations & Diagnostic Follow-ups:</strong>
       <ul style="margin-top: 6px;">
         <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Clinical bedside validation.</li>
@@ -1453,11 +1380,11 @@ document.addEventListener("DOMContentLoaded", () => {
       briefExplanation: p.briefExplanation,
       detailedExplanation: p.detailedExplanation,
       pathophysiology: p.pathophysiology,
-      precautions: p.precautions,
+      precautions: precautionsList,
       diseaseGuide: p.diseaseGuide,
       isHighRisk: p.isHighRisk,
       reportId: reportGeneratedId,
-      fileName: "Benchmark Sample ECG",
+      fileName: p.reportFileName || p.fileName || (customUploadedFile ? customUploadedFile.name : "Uploaded ECG Report"),
     });
 
     // EMERGENCY HIGH-RISK BANNER LOGIC
@@ -1599,50 +1526,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (pCanvas) {
         pCanvas.style.display = "block";
         renderEcgToCanvas("print-ecg-canvas", stageClass === "st-1" ? "normal" : "afib");
-      }
-    }
-  }
-    if (pMSt) pMSt.textContent = st || "0.0 mm";
-    if (pMReg) pMReg.textContent = regularity || "Regular";
-    if (pPath) pPath.textContent = pathophysiology || "Electrical impulses propagate sequentially through the cardiac syncytium without regional delay.";
-
-    if (pPrec) {
-      const list = Array.isArray(precautions) && precautions.length > 0 ? precautions : [
-        "Maintain balanced hydration and essential electrolytes (potassium, magnesium).",
-        "Adopt a heart-healthy dietary pattern (DASH / Mediterranean).",
-        "Maintain 150 minutes of weekly aerobic exercise.",
-        "Avoid excessive stimulants, energy drinks, and tobacco."
-      ];
-      pPrec.innerHTML = `<ul>${list.map((i) => `<li>${i}</li>`).join("")}</ul>`;
-    }
-
-    if (pGuide) {
-      pGuide.innerHTML = `
-        <ul>
-          <li><strong>Comprehensive 12-Lead Confirmation ECG:</strong> Clinical bedside validation by attending physician.</li>
-          <li><strong>Transthoracic Echocardiogram (Echo):</strong> Evaluates chamber dimensions & left ventricular ejection fraction (LVEF).</li>
-          <li><strong>High-Sensitivity Cardiac Troponin-I:</strong> Biomarker assay to rule out acute ischemia or myocardial injury.</li>
-          <li><strong>24-48 Hour Holter Telemetry:</strong> Evaluates intermittent transient arrhythmia burden.</li>
-        </ul>
-      `;
-    }
-
-    if (pEmerg) {
-      pEmerg.style.display = isHighRisk ? "block" : "none";
-    }
-
-    // Waveform rendering for print
-    if (customUploadedFile && previewImg && previewImg.style.display !== "none" && previewImg.src) {
-      if (pImg) {
-        pImg.src = previewImg.src;
-        pImg.style.display = "block";
-      }
-      if (pCanvas) pCanvas.style.display = "none";
-    } else {
-      if (pImg) pImg.style.display = "none";
-      if (pCanvas) {
-        pCanvas.style.display = "block";
-        renderEcgToCanvas("print-ecg-canvas", stageClass === "st-4" ? "stemi" : stageClass === "st-3" ? "afib" : stageClass === "st-2" ? "brady" : "normal");
       }
     }
   }

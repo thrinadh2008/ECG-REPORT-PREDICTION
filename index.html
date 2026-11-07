@@ -731,6 +731,7 @@
       place-items: center;
       margin: 0 auto 10px;
       transition: all 0.2s;
+      pointer-events: none;
     }
 
     .dropzone:hover .dropzone-icon {
@@ -744,6 +745,7 @@
       font-weight: 700;
       color: var(--color-navy);
       margin: 0 0 12px;
+      pointer-events: none;
     }
 
     .dropzone-input {
@@ -753,6 +755,7 @@
       height: 100%;
       opacity: 0;
       cursor: pointer;
+      z-index: 10;
     }
 
     .file-select-btn {
@@ -2070,10 +2073,6 @@
       </a>
 
       <div class="top-telemetry">
-        <a class="telemetry-pill" href="/instagram_post_studio.html" target="_blank" style="text-decoration: none; border-color: rgba(6, 182, 212, 0.4); color: #38BDF8;" title="Open Instagram Reel & Post Kit">
-          <span>📱 Instagram Video Kit</span>
-        </a>
-
         <div class="telemetry-pill">
           <span class="telemetry-dot"></span>
           <span>Diagnostic Engine: Online</span>
@@ -2183,43 +2182,22 @@
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 14 14"></polyline>
           </svg>
-          Clinical Rhythm Benchmarks (Target Abnormality: AFib / AFL)
+          Clinical Rhythm Benchmark (Target Abnormality: Atrial Fibrillation)
         </span>
       </div>
       <div class="preset-chips-row">
+        <button class="preset-chip-btn active" data-preset="afib" type="button">
+          <div class="preset-badge-icon icon-afib">AFIB</div>
+          <div class="preset-chip-text">
+            <h4>Atrial Fibrillation (Special Abnormality)</h4>
+            <span>118 BPM · 1D ECG Transformer (88.0% Confidence)</span>
+          </div>
+        </button>
         <button class="preset-chip-btn" data-preset="normal" type="button">
           <div class="preset-badge-icon icon-normal">NSR</div>
           <div class="preset-chip-text">
             <h4>Normal Sinus Rhythm</h4>
-            <span>72 BPM · Baseline Control</span>
-          </div>
-        </button>
-        <button class="preset-chip-btn" data-preset="afib" type="button">
-          <div class="preset-badge-icon icon-afib">AFIB</div>
-          <div class="preset-chip-text">
-            <h4>Atrial Fibrillation (Persistent)</h4>
-            <span>118 BPM · Target Abnormality (88% Conf)</span>
-          </div>
-        </button>
-        <button class="preset-chip-btn" data-preset="afib_rvr" type="button">
-          <div class="preset-badge-icon icon-stemi">RVR</div>
-          <div class="preset-chip-text">
-            <h4>AFib with Rapid Response</h4>
-            <span>134 BPM · Tachycardic Ventricular Rate</span>
-          </div>
-        </button>
-        <button class="preset-chip-btn" data-preset="pafib" type="button">
-          <div class="preset-badge-icon icon-brady">pAF</div>
-          <div class="preset-chip-text">
-            <h4>Paroxysmal Atrial Fibrillation</h4>
-            <span>88 BPM · Intermittent / Episodic</span>
-          </div>
-        </button>
-        <button class="preset-chip-btn" data-preset="aflutter" type="button">
-          <div class="preset-badge-icon icon-vt">AFL</div>
-          <div class="preset-chip-text">
-            <h4>Atrial Flutter (Sawtooth AFL)</h4>
-            <span>150 BPM · 2:1 Macro-Reentrant Block</span>
+            <span>72 BPM · Baseline Healthy Control</span>
           </div>
         </button>
       </div>
@@ -2244,7 +2222,7 @@
               </svg>
             </div>
             <h3 class="dropzone-title">Drag & drop your ECG report here</h3>
-            <span class="file-select-btn">Choose ECG File</span>
+            <label for="report-file" class="file-select-btn" style="cursor: pointer;">Choose ECG File</label>
             <input type="file" id="report-file" class="dropzone-input"
               accept=".pdf,.jpg,.jpeg,.png,.webp,image/*,application/pdf" />
           </div>

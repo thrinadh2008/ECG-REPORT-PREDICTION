@@ -1311,16 +1311,6 @@ document.addEventListener("DOMContentLoaded", () => {
       briefRecommendation.textContent = p.briefExplanation?.recommendation || "Clinical review is advised.";
     }
 
-    // Agentic AI nodes
-    const nodeQualityVal = document.getElementById("agent-quality-val");
-    const nodeXaiVal = document.getElementById("agent-xai-val");
-    const nodeRagVal = document.getElementById("agent-rag-val");
-    const nodeConfVal = document.getElementById("agent-conf-val");
-    if (nodeQualityVal) nodeQualityVal.textContent = `Quality: ${p.signalQuality || "Good"} (${p.qualityScore || "94.6%"})`;
-    if (nodeXaiVal) nodeXaiVal.textContent = `Regions: ${p.transformerAttention?.primaryFocus || "Absent P-waves & Chaotic f-waves"}`;
-    if (nodeRagVal) nodeRagVal.textContent = `Knowledge: ${p.detailedExplanation?.ragBiomedicalInsights ? p.detailedExplanation.ragBiomedicalInsights.slice(0, 45) + "..." : "Atrial Re-entry & LAA Stasis"}`;
-    if (nodeConfVal) nodeConfVal.textContent = `Confidence: ${p.confidence || "88.0%"} · ${p.evidenceStrength || "Strong Evidence"}`;
-
     if (transformerVisualizer) {
       transformerVisualizer.setProfile(p);
     }
